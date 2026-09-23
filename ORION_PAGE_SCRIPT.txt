@@ -1,0 +1,623 @@
+<script id="page-scripts" data-behaviors="configurator-logic,swatch-detail,mount-state,lift-state,accessory-state,swatch-autohide,accessory-color-no-preselect,mount-handoff,accessory-image-on-select,motorized-accessories-rail,motorized-categories-split,apple-watch-subprompt,headrail-sibling-pattern,sub-options-sibling-pattern,aesthetic-categories-flat,viewport-dead-zone-fix,operation-shows-lift-hero,accessory-image-fallback,accessory-default-image-guarantee,lift-compatibility-source-of-truth,group-aware-color-lookup,footer-summary-includes-lift-and-accessories,motorized-viewport-suppression,is-category-hero-default,motorized-selections-viewport-inert,topline-trigger-hysteresis,operation-hero-from-csv,sub-option-also-refreshes-viewport,hysteresis-band-40-100,lifestyle-hero-swap-by-fabric-type,mobile-trigger-uses-sticky-bottom,mobile-edge-to-edge-preview,safe-area-inset-footer,reduced-motion-friendly-transitions,lifestyle-hero-is-default-on-load,no-state-layer-without-section-claim,mobile-cinematic-preview-per-section,size-dropdown-from-csv,precise-csv-error-reporting,accessory-summary-shows-selection,headrail-defaults-to-standard-roll,color-required-only-with-color-group,add-to-bag-prompts-color-refinement,mount-holds-through-size-section,add-to-bag-tap-feedback,product-type-filter,pricing-csv-section-parser,pricing-section-name-trimmed,fabric-swatch-horizontal-rail,swatch-rail-overflow-indicator,vertical-section-progress,fabric-type-header-description-removed,fabric-type-card-description,fabric-rail-clickable-chevrons,chevron-button-pointer-events-fix,fabric-rail-chevron-only-navigation,solar-openness-fallbacks,solar-hero-swap,palette-strip-additive,palette-strip-relocated-outside-rail-wrap,chevron-direct-scroll-left-fallback,rail-flush-left-no-leading-gap,chevron-snap-to-swatch,chevron-direct-assign-no-snap-math,staged-fabric-selection,swatch-only-card-click,no-card-chevron,apple-card-color-subprompt,apple-card-color-subprompt,apple-card-subprompt-visibility-fix,collection-image-on-card-click,card-click-re-renders,grid-stays-visible-after-color,collection-state-preloader,preview-image-url-fallback,csv-cell-trust,collection-state-layer-overlay,swatch-close-preserves-selection,lift-image-css-anchor,viewport-state-machine-must-trigger,viewport-state-machine-no-early-return,collection-img-is-active-toggle,collection-layer-transparent-bg,collection-img-onerror-fallback,card-click-triggers-pricing,trailing-empty-widths-allowed,within-matrix-missing-price-validated,extra-price-values-warned,lift-image-product-override,size-from-dom,product-type-accessory-filter,github-csv-source-of-truth,page-load-cache-buster,cache-no-store,normalized-product-ui-lookup,product-type-lift-image-override,product-type-accessory-image-override,accessory-color-image-override-csv,pricing-qa-assertions,lifestyle-hero-from-fabrictypes-csv,pricing-key-is-price-group-only,product-type-availability-filter,accessory-family-csv-or-placeholder,standard-headrail-surcharge,required-data-sanity-gate,mount-images-csv-driven,remote-accessory-optional,retired-compatibility-fields-removed,phase-2b-canonical-context,phase-2b-product-slug-routing,phase-2b-fabric-slug-routing,phase-2b-context-sanity-checks,phase-2b-rebind-lifestyle-heroes,phase-2b-no-first-hero-fallback,phase-2b-lift-blank-image-available,phase-2b-productacc-colors-sanity,phase-2b-dynamic-product-title,phase-2b-fabrictype-csv-sourced,phase-2b-product-type-exact-match,phase-2b-vendor-exact-match,phase-2b-no-startswith-product-filter,phase-2c-fractional-dimensions,phase-2c-actual-width-pricing,phase-2c-matrix-breakpoint-snap,phase-2c-beyond-last-breakpoint-reject,phase-2c-actual-dim-constraints,phase-2c-per-inch-actual-width,phase-2c-headrail-surcharge-actual,phase-2c-progressive-section-gates,phase-2c-viewport-skips-locked,phase-2c-size-warning,phase-2c-review-actual-dims,phase-2c-shopify-actual-dims,phase-2c-default-24x24-fractions-zero,orion-checkout-variant-resolved-from-csv,orion-checkout-variant-validated,orion-checkout-discrete-manufacturing-properties,orion-checkout-lead-best-effort,orion-checkout-lead-keepalive,orion-checkout-lead-non-blocking,orion-checkout-supplementary-accessory-descriptions">(function() {
+    if (!document.documentElement.dataset.configVersion) {
+        document.documentElement.dataset.configVersion = '1';
+    }
+    const STAGED_SELECTION_ENABLED = document.documentElement.dataset.configVersion !== '0';
+
+    const PAGE_LOAD_VERSION = Date.now();
+    function csvUrl(u) { if (!u) return u; const sep = u.indexOf('?') === -1 ? '?' : '&'; return u + sep + 'orion_v=' + PAGE_LOAD_VERSION; }
+
+    const LIFT_ICONS = {
+        standard: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82V9a1.65 1.65 0 0 0 1.51-1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+        motor: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+        somfy: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>',
+        solo: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>',
+        wand: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="6" y2="4"/><circle cx="18" cy="20" r="1"/><circle cx="6" cy="4" r="1"/></svg>'
+    };
+
+    const CATEGORY_ORDER = ['Headrail', 'Valance', 'Cassette', 'Bottom Rail'];
+    const CATEGORY_LABELS = { 'Headrail': 'Headrail', 'Valance': 'Valance', 'Cassette': 'Cassette', 'Bottom Rail': 'Bottom rail', 'Remote': 'Remotes', 'Charger': 'Charger', 'Smart Automation': 'Smart automation' };
+    const CATEGORY_SUBS = { 'Headrail': 'Select the headrail style that best finishes your shade.', 'Valance': 'Add a decorative valance to finish the top of your shade.', 'Cassette': 'Wrap your shade in a clean cassette housing.', 'Bottom Rail': 'Choose the bottom rail finish.', 'Remote': 'Control your shade with a handheld remote.', 'Charger': 'Keep your motorized shade powered.', 'Smart Automation': 'Connect your shades to your smart home.' };
+    const MOTORIZED_CATEGORIES = ['Remote', 'Charger', 'Smart Automation'];
+    const MOTORIZED_DESCRIPTIONS = { 'Remote': 'Pick a remote to control your motorized shade. (Optional.)', 'Charger': 'Keep your motorized shade powered. (Optional.)', 'Smart Automation': 'Connect your shades to your smart home. (Optional.)' };
+    const FABRIC_TYPE_FALLBACKS = {};
+    const OPENNESS_FALLBACKS = { '1%': 'Maximum privacy. Minimal light. Ideal for bedrooms.', '3%': 'Strong privacy with some natural light. Versatile.', '5%': 'Balanced privacy and light. Most popular.', '10%': 'More light, less privacy. Living areas.' };
+    const SECTION_PROGRESS_MAP = [
+        { key: 'fabric-type', label: 'Light & Privacy', short: 'Light & Privacy' },
+        { key: 'fabric-collection', label: 'Fabric', short: 'Fabric' },
+        { key: 'mount', label: 'Mounting', short: 'Mount' },
+        { key: 'size', label: 'Size', short: 'Size' },
+        { key: 'controls', label: 'Operation', short: 'Operation' },
+        { key: 'details', label: 'Details', short: 'Details' },
+        { key: 'services', label: 'Services', short: 'Services' }
+    ];
+
+    const GITHUB_BASE = 'https://raw.githubusercontent.com/orionblinds/orion-configurator-data/main/';
+    const CSV_URLS = {
+        products: GITHUB_BASE + 'orion_products.csv', pricing: GITHUB_BASE + 'orion_pricing.csv',
+        colors: GITHUB_BASE + 'orion_colors.csv', lifts: GITHUB_BASE + 'orion_liftsystems.csv',
+        accessories: GITHUB_BASE + 'orion_accessories.csv', accColors: GITHUB_BASE + 'orion_accessorycolors.csv',
+        fabricTypes: GITHUB_BASE + 'orion_fabrictypes.csv', productUi: GITHUB_BASE + 'orion_product_ui.csv',
+        productLifts: GITHUB_BASE + 'orion_product_lifts.csv', productAccessories: GITHUB_BASE + 'orion_product_accessories.csv',
+        productAccColors: GITHUB_BASE + 'orion_product_accessorycolors.csv'
+    };
+    const FALLBACK_ACCESSORY_IMAGES = { 'Remote': 'https://cdn.shopify.com/s/files/1/0799/1456/5913/files/solo-motor_be46dd5b-c871-4b89-830e-6bbdf33537d6.png?v=1784856905', 'Charger': 'https://cdn.shopify.com/s/files/1/0799/1456/5913/files/solo-motor_be46dd5b-c871-4b89-830e-6bbdf33537d6.png?v=1784856905', 'Smart Automation': 'https://cdn.shopify.com/s/files/1/0799/1456/5913/files/solo-motor_be46dd5b-c871-4b89-830e-6bbdf33537d6.png?v=1784856905', 'Headrail': 'https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova-cassette.png?v=1784834831', 'Valance': 'https://cdn.shopify.com/s/files/1/0799/1456/5913/files/metal_valance.png?v=1784834831', 'Cassette': 'https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova-cassette.png?v=1784834831' };
+    const ACCESSORY_DEFAULT_IMAGE = 'https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova-cassette.png?v=1784834831';
+    const OPERATION_HERO_FALLBACK = 'https://placehold.co/1200x800/f5f5f7/86868b?text=Select+Operation';
+    const COLLECTION_DEFAULT_IMAGE = 'https://placehold.co/1200x800/f5f5f7/86868b?text=Select+a+fabric';
+    const ACCESSORY_FAMILY_PLACEHOLDER = 'https://placehold.co/1200x800/f5f5f7/86868b?text=Accessories';
+    const LIFESTYLE_BLANK_PLACEHOLDER = 'https://placehold.co/1200x800/f5f5f7/86868b?text=Accessories';
+    const SHOPIFY_CONFIG = { domain: 'orionblinds.ca', shopName: '2a9534', priceCalculation: 'quantity' };
+    const CONFIG = { timeout: 30000, maxInitialCollections: 3 };
+    const SIZE_HARD_MIN_W = 12;
+    const SIZE_HARD_MIN_H = 12;
+    const PRICE_UNPRICEABLE = null;
+    const EIGHTHS = 8;
+
+    const CONTEXT = { vendor: '', productSlug: '', productType: '', fabricSlug: '', fabricType: '', uiRow: null, fabricTypeRows: [] };
+
+    let STATE = {
+        data: { products: [], pricing: {}, colors: {}, lifts: [], accessories: [], accColors: [], fabricTypes: [], productUi: [], productLifts: [], productAccessories: [], productAccColors: [], productAccColorImages: {}, fabricTypeByKey: {} },
+        selections: { fabricType: '', collectionId: '', colorName: '', mount: '', width: 24, height: 24, actualWidth: 24, actualHeight: 24, widthEighths: 0, heightEighths: 0, liftId: '', accessorySelections: {}, accSubSelections: {}, accColorSelections: {}, measurement: '', installation: '' },
+        hasUserInteracted: false, showAllCollections: false, currentTotalPrice: 0, activeSwatchImage: '', activeMountView: 'comparison', activeLiftView: 'default', activeAccessoryView: 'default', activeAccessoryCategory: '', activeAccessorySection: '', visibleAccessoryCategories: [], motorizedCategories: [], aestheticCategories: [], swatchDetailActive: false, sizeInvalidReason: ''
+    };
+
+    const MOBILE_MQ = window.matchMedia('(max-width: 1023px)');
+    const isMobile = () => MOBILE_MQ.matches;
+
+    const el = {
+        form: () => document.getElementById('configurator-form'),
+        loader: () => document.getElementById('config-loader'),
+        loaderText: () => document.querySelector('#config-loader p'),
+        error: () => document.getElementById('config-error'),
+        fabricType: () => document.getElementById('fabric-type-container'),
+        collections: () => document.getElementById('collections-container'),
+        controls: () => document.getElementById('controls-container'),
+        motorAccessories: () => document.getElementById('motorized-accessories-container'),
+        accessories: () => document.getElementById('accessories-container'),
+        accSummaryRow: () => document.getElementById('accessory-summary-row'),
+        toast: () => document.getElementById('apple-toast-container'),
+        toastMsg: () => document.getElementById('toast-message'),
+        sizeWarning: () => document.getElementById('size-warning'),
+        priceDisplay: () => [document.getElementById('total-price'), document.getElementById('rev-total-price'), document.getElementById('footer-price'), document.querySelector('#product-header-block [data-content="header-price"]')].filter(Boolean),
+        summaryDisplay: () => [document.getElementById('summary-text'), document.getElementById('footer-summary')].filter(Boolean),
+        collectionImg: () => document.getElementById('collection-state-img'),
+        collectionLayer: () => document.getElementById('collection-state-layer'),
+        review: { section: () => document.getElementById('review-section'), backdrop: () => document.getElementById('review-backdrop'), content: () => document.querySelector('#review-section > div:nth-child(2)'), closeBtn: () => document.getElementById('close-review'), toggleBtn: () => document.getElementById('toggle-review-btn'), fabricVal: () => document.getElementById('rev-fabric-val'), mountVal: () => document.getElementById('rev-mount-val'), controlsVal: () => document.getElementById('rev-controls-val'), serviceVal: () => document.getElementById('rev-service-val'), addToBagBtn: () => document.querySelector('[data-content="rev-btn-cart"]') }
+    };
+
+    function parseCSVRow(line) { const fields = []; let field = ''; let inQuotes = false; for (let i = 0; i < line.length; i++) { const ch = line[i]; const next = line[i + 1]; if (inQuotes) { if (ch === '"' && next === '"') { field += '"'; i++; } else if (ch === '"') { inQuotes = false; } else { field += ch; } } else { if (ch === '"') { inQuotes = true; } else if (ch === ',') { fields.push(field); field = ''; } else { field += ch; } } } fields.push(field); return fields.map(f => f.trim()); }
+    function parseCSV(text) { const lines = text.split(/\r?\n/); let headers = null; const rows = []; for (let i = 0; i < lines.length; i++) { const line = lines[i]; if (line == null) continue; const trimmed = line.trim(); if (trimmed === '') continue; if (trimmed.startsWith('#')) continue; const fields = parseCSVRow(line); const hasContent = fields.some(c => (c || '').trim() !== ''); if (!hasContent) continue; if (headers == null) { headers = fields.map(h => h.trim()); continue; } const obj = {}; headers.forEach((h, idx) => { obj[h] = (fields[idx] != null ? fields[idx] : '').trim(); }); rows.push(obj); } return rows; }
+    function parsePricingCSV(text) {
+        const lines = text.split(/\r?\n/);
+        const matrices = {};
+        let currentKey = null;
+        let currentWidths = null;
+        for (let i = 0; i < lines.length; i++) {
+            const raw = lines[i] == null ? '' : lines[i];
+            const trimmed = raw.trim();
+            if (trimmed === '') continue;
+            if (trimmed.startsWith('#')) {
+                const m = trimmed.match(/^#(GROUP|TARGET):(.+)$/i);
+                if (m) {
+                    currentKey = m[2].split(',')[0].trim();
+                    currentWidths = null;
+                    matrices[currentKey] = {};
+                }
+                continue;
+            }
+            const fields = parseCSVRow(raw);
+            if (currentKey && currentWidths == null) {
+                const firstIsEmpty = (fields[0] || '').trim() === '';
+                if (firstIsEmpty) {
+                    const numericValues = fields.slice(1).map(f => f.trim() === '' ? null : parseFloat(f)).filter(v => v !== null && !isNaN(v));
+                    if (numericValues.length > 0) {
+                        currentWidths = numericValues;
+                        continue;
+                    }
+                }
+            }
+            if (currentKey && currentWidths) {
+                const heightVal = parseFloat(fields[0]);
+                if (isNaN(heightVal)) continue;
+                const row = {};
+                const missingWidths = [];
+                for (let wIdx = 0; wIdx < currentWidths.length; wIdx++) {
+                    const fieldIdx = wIdx + 1;
+                    const f = (fields[fieldIdx] || '').trim();
+                    if (f === '') {
+                        missingWidths.push(currentWidths[wIdx]);
+                        continue;
+                    }
+                    const price = parseFloat(f);
+                    if (!isNaN(price)) {
+                        row[currentWidths[wIdx]] = price;
+                    } else {
+                        missingWidths.push(currentWidths[wIdx]);
+                    }
+                }
+                if (missingWidths.length > 0) {
+                    missingWidths.forEach(w => {
+                        console.error('[Orion] CRITICAL: Matrix "' + currentKey + '" is missing price for ' + w + 'x' + heightVal + '. Please fix the pricing CSV.');
+                    });
+                }
+                if (Object.keys(row).length > 0) matrices[currentKey][heightVal] = row;
+            }
+        }
+        return matrices;
+    }
+    function runSanityGates(data) { const failures = []; if (!Array.isArray(data.products) || data.products.length === 0) failures.push('orion_products.csv parsed with 0 rows'); if (!data.pricing || typeof data.pricing !== 'object' || Object.keys(data.pricing).length === 0) failures.push('orion_pricing.csv parsed with 0 matrices'); if (!Array.isArray(data.colors) || data.colors.length === 0) failures.push('orion_colors.csv parsed with 0 rows'); if (!Array.isArray(data.lifts) || data.lifts.length === 0) failures.push('orion_liftsystems.csv parsed with 0 rows'); if (!Array.isArray(data.accessories) || data.accessories.length === 0) failures.push('orion_accessories.csv parsed with 0 rows'); if (!Array.isArray(data.accColors) || data.accColors.length === 0) failures.push('orion_accessorycolors.csv parsed with 0 rows'); if (!Array.isArray(data.fabricTypes) || data.fabricTypes.length === 0) failures.push('orion_fabrictypes.csv parsed with 0 rows'); if (!Array.isArray(data.productUi) || data.productUi.length === 0) failures.push('orion_product_ui.csv parsed with 0 rows'); if (!Array.isArray(data.productLifts) || data.productLifts.length === 0) failures.push('orion_liftsystems.csv parsed with 0 rows for product mapping'); if (!Array.isArray(data.productAccessories) || data.productAccessories.length === 0) failures.push('orion_product_accessories.csv parsed with 0 rows'); if (!Array.isArray(data.productAccColors) || data.productAccColors.length === 0) failures.push('orion_product_accessorycolors.csv parsed with 0 rows'); return failures; }
+    function resolveContext() { const params = new URLSearchParams(window.location.search); const requestedSlug = (params.get('product') || '').trim().toLowerCase(); const requestedFabricSlug = (params.get('fabric') || '').trim().toLowerCase(); const slugToResolve = requestedSlug || 'zebra'; const productUi = STATE.data.productUi; const uiRow = productUi.find(row => (row.Product_Slug || '').trim().toLowerCase() === slugToResolve); if (!uiRow) { if (requestedSlug) { const validSlugs = productUi.map(r => (r.Product_Slug || '').trim()).filter(Boolean); return { code: 'INVALID_PRODUCT', requested: requestedSlug, valid: validSlugs }; } return { code: 'NO_FALLBACK_PRODUCT' }; } const productType = (uiRow.Product_Type || '').trim(); const vendor = (uiRow.Vendor || '').trim(); if (!productType) return { code: 'INVALID_PRODUCT_UI', productSlug: (uiRow.Product_Slug || '').trim(), missing: 'Product_Type' }; if (!vendor) return { code: 'INVALID_PRODUCT_UI', productSlug: (uiRow.Product_Slug || '').trim(), missing: 'Vendor' }; const fabricTypeRows = STATE.data.fabricTypes.filter(row => (row.Product_Type || '').trim() === productType && (row.Vendor || '').trim() === vendor); if (fabricTypeRows.length === 0) { return { code: 'NO_FABRIC_TYPES', productType, vendor }; } let resolvedFabric = null; if (requestedFabricSlug) { resolvedFabric = fabricTypeRows.find(ft => (ft.Fabric_Type_Slug || '').trim().toLowerCase() === requestedFabricSlug); if (!resolvedFabric) { const available = fabricTypeRows.map(ft => (ft.Fabric_Type_Slug || '').trim()).filter(Boolean); return { code: 'INVALID_FABRIC', productType, vendor, requestedFabricSlug, available }; } } else { const defaults = fabricTypeRows.filter(ft => String(ft.Is_Default || '').trim().toLowerCase() === 'true'); if (defaults.length > 1) { return { code: 'MULTIPLE_DEFAULTS', productType, vendor, defaults: defaults.map(d => (d.Fabric_Type || '').trim()) }; } if (defaults.length === 0) { return { code: 'NO_DEFAULT', productType, vendor, available: fabricTypeRows.map(ft => (ft.Fabric_Type || '').trim()).filter(Boolean) }; } resolvedFabric = defaults[0]; } CONTEXT.vendor = vendor; CONTEXT.productSlug = (uiRow.Product_Slug || '').trim(); CONTEXT.productType = productType; CONTEXT.fabricSlug = (resolvedFabric.Fabric_Type_Slug || '').trim(); CONTEXT.fabricType = (resolvedFabric.Fabric_Type || '').trim(); CONTEXT.uiRow = uiRow; CONTEXT.fabricTypeRows = fabricTypeRows; return null; }
+    function runContextSanityChecks() { const failures = []; if (STATE.data.products.length === 0) { failures.push('No product rows for "' + CONTEXT.productType + '" (vendor ' + CONTEXT.vendor + ').'); } const productLiftRows = (STATE.data.productLifts || []).filter(row => (row.Product_Type || '').trim() === CONTEXT.productType && (row.Vendor || '').trim() === CONTEXT.vendor); if (productLiftRows.length === 0) { failures.push('No product lift mapping rows for "' + CONTEXT.productType + '" (vendor ' + CONTEXT.vendor + ').'); } const productAccRows = (STATE.data.productAccessories || []).filter(row => (row.Product_Type || '').trim() === CONTEXT.productType && (row.Vendor || '').trim() === CONTEXT.vendor); if (productAccRows.length === 0) { failures.push('No product accessory mapping rows for "' + CONTEXT.productType + '" (vendor ' + CONTEXT.vendor + ').'); } return failures; }
+    function showContextError(err) { let message = ''; if (!err) { message = 'Unknown context resolution error.'; } else if (err.code === 'INVALID_PRODUCT') { const list = (err.valid || []).join(', '); message = 'Invalid product "' + err.requested + '".' + (list ? ' Available products: ' + list + '.' : ' No valid products are defined.'); } else if (err.code === 'NO_FALLBACK_PRODUCT') { message = 'No default product available. The product UI data is missing.'; } else if (err.code === 'INVALID_PRODUCT_UI') { message = 'Invalid product UI row for "' + err.productSlug + '" is missing ' + err.missing + '.'; } else if (err.code === 'NO_FABRIC_TYPES') { message = 'No fabric type rows found for "' + err.productType + '" (vendor ' + CONTEXT.vendor + ').'; } else if (err.code === 'INVALID_FABRIC') { const list = (err.available || []).join(', '); message = 'Invalid fabric "' + err.requestedFabricSlug + '" for "' + err.productType + '".' + (list ? ' Available fabrics: ' + list + '.' : ' No fabrics are defined for this product.'); } else if (err.code === 'MULTIPLE_DEFAULTS') { message = 'Multiple default fabric types for "' + err.productType + '": ' + (err.defaults || []).join(', ') + '.'; } else if (err.code === 'NO_DEFAULT') { const list = (err.available || []).join(', '); message = 'No default fabric type for "' + err.productType + '". One row must have Is_Default=TRUE.' + (list ? ' Defined fabrics: ' + list + '.' : ''); } else if (err.code === 'CONTEXT_VALIDATION') { message = 'Context validation failed: ' + (err.failures || []).join(' • '); } else if (typeof err === 'string') { message = err; } else { message = 'Context resolution failed.'; } console.error('[Orion] CONTEXT error:', err); const errEl = el.error(); const formEl = el.form(); const loaderEl = el.loader(); if (loaderEl) loaderEl.style.display = 'none'; if (formEl) formEl.classList.add('hidden'); if (errEl) { errEl.classList.remove('hidden'); errEl.classList.add('flex'); const p = errEl.querySelector('p'); if (p) p.innerText = message; } }
+    function applyContextText() { const titleEl = document.querySelector('#product-header-block [data-content="product-title"]'); if (titleEl) { titleEl.innerText = CONTEXT.productType; } }
+    function syncMountImages() { const layer = document.getElementById('mount-state-layer'); if (!layer) return; if (!CONTEXT.uiRow) return; const ui = CONTEXT.uiRow; const comp = layer.querySelector('#mount-img-comparison'); const inside = layer.querySelector('#mount-img-inside'); const outside = layer.querySelector('#mount-img-outside'); if (comp && (ui.Mount_Comparison_Image_URL || '').trim()) comp.src = ui.Mount_Comparison_Image_URL.trim(); if (inside && (ui.Mount_Inside_Image_URL || '').trim()) inside.src = ui.Mount_Inside_Image_URL.trim(); if (outside && (ui.Mount_Outside_Image_URL || '').trim()) outside.src = ui.Mount_Outside_Image_URL.trim(); }
+    function syncMountModalImages() { if (!CONTEXT.uiRow) return; const ui = CONTEXT.uiRow; const imgs = document.querySelectorAll('#mount-modal .mount-comparison img'); if (imgs.length >= 2) { if (imgs[0] && (ui.Mount_Inside_Image_URL || '').trim()) imgs[0].src = ui.Mount_Inside_Image_URL.trim(); if (imgs[1] && (ui.Mount_Outside_Image_URL || '').trim()) imgs[1].src = ui.Mount_Outside_Image_URL.trim(); } }
+    function runPricingAssertions() { const assertions = [{ key: 'PG3', w: 24, h: 24, expected: 211 }, { key: 'classiquelf', w: 24, h: 24, expected: 299 }, { key: 'nocturnxl', w: 24, h: 24, expected: 301 }, { key: 'opallf', w: 24, h: 24, expected: 314 }]; const failures = []; assertions.forEach(a => { const matrix = STATE.data.pricing[a.key]; if (!matrix) { failures.push('Matrix "' + a.key + '" missing.'); return; } const price = lookupMatrixPrice(matrix, a.w, a.h); if (price !== a.expected) { failures.push(a.key + ' ' + a.w + 'x' + a.h + '=' + price + ' (expected ' + a.expected + ').'); } }); if (failures.length > 0) { console.error('[Orion] Pricing QA failed:', failures); const errEl = el.error(); const formEl = el.form(); const loaderEl = el.loader(); if (loaderEl) loaderEl.style.display = 'none'; if (formEl) formEl.classList.add('hidden'); if (errEl) { errEl.classList.remove('hidden'); errEl.classList.add('flex'); const p = errEl.querySelector('p'); if (p) p.innerText = 'Pricing data integrity check failed. ' + failures.join(' '); } return false; } return true; }
+    function calculateAccessoryPrice(acc, w) { if (!acc) return 0; const priceType = (acc.Price_Type || '').trim(); const base = parseFloat(acc.Base_Price || 0); if (priceType === 'Fixed') return base; if (priceType === 'Per_Inch') return base + (parseFloat(acc.Price_Per_Inch || 0) * w); return base; }
+    function rebindLifestyleHeroes() { const slots = Array.from(document.querySelectorAll('#preview-block [data-fabric-type]')); if (slots.length === 0) return; slots.forEach(s => { s.dataset.fabricType = ''; s.dataset.boundFabricType = ''; s.dataset.boundProductType = ''; s.dataset.boundFabricSlug = ''; s.style.display = 'none'; s.src = LIFESTYLE_BLANK_PLACEHOLDER; }); CONTEXT.fabricTypeRows.forEach((ft, i) => { if (i >= slots.length) return; const slot = slots[i]; const fabricType = (ft.Fabric_Type || '').trim(); const heroUrl = (ft.Lifestyle_Hero_Image_URL || '').toString().trim(); const fabricSlug = (ft.Fabric_Type_Slug || '').trim(); slot.dataset.fabricType = fabricType; slot.dataset.boundFabricType = fabricType; slot.dataset.boundProductType = CONTEXT.productType; slot.dataset.boundFabricSlug = fabricSlug; slot.alt = 'Lifestyle — ' + fabricType; if (heroUrl) { slot.src = heroUrl; } else { slot.src = LIFESTYLE_BLANK_PLACEHOLDER; } }); }
+    function parseFractionValue(v) { const s = String(v == null ? '0' : v).trim(); if (s === '' || s === '0') return 0; const m = s.match(/^(\d+)\s*\/\s*(\d+)$/); if (!m) return 0; const num = parseInt(m[1], 10); const den = parseInt(m[2], 10); if (den === EIGHTHS && num >= 0 && num <= 7) return num; return 0; }
+    function formatDimension(whole, eighths) { const w = parseInt(whole, 10) || 0; const e = parseInt(eighths, 10) || 0; if (e === 0) return w + '"'; const fracMap = { 1: '1/8', 2: '1/4', 3: '3/8', 4: '1/2', 5: '5/8', 6: '3/4', 7: '7/8' }; return w + ' ' + fracMap[e] + '"'; }
+    function evaluateDimensionValidity() { const s = STATE.selections; const w = s.actualWidth; const h = s.actualHeight; if (!isFinite(w) || !isFinite(h) || w <= 0 || h <= 0) { return { ok: false, reason: 'Enter your finished size.' }; } if (w < SIZE_HARD_MIN_W || h < SIZE_HARD_MIN_H) { return { ok: false, reason: 'Minimum size is ' + SIZE_HARD_MIN_W + '″ × ' + SIZE_HARD_MIN_H + '″.' }; } const prod = (STATE.data.products || []).find(p => p.Collection_ID === s.collectionId); if (prod) { const maxW = parseFloat(prod.Max_Width); const maxH = parseFloat(prod.Max_Height); if (!isNaN(maxW) && maxW > 0 && w > maxW) { return { ok: false, reason: 'Width exceeds collection max (' + maxW + '″).' }; } if (!isNaN(maxH) && maxH > 0 && h > maxH) { return { ok: false, reason: 'Height exceeds collection max (' + maxH + '″).' }; } if (prod) { const matrix = STATE.data.pricing[(prod.Price_Group || '').trim()]; if (matrix) { const limits = getMatrixLimitsForMatrix(matrix); if (limits) { if (w > limits.lastW) { return { ok: false, reason: 'Width exceeds the maximum priceable size (' + limits.lastW + '″).' }; } if (h > limits.lastH) { return { ok: false, reason: 'Height exceeds the maximum priceable size (' + limits.lastH + '″).' }; } } } } } return { ok: true, reason: '' }; }
+    function lookupMatrixPrice(matrix, w, h) { if (!matrix) return PRICE_UNPRICEABLE; const hKeys = Object.keys(matrix).map(Number).filter(v => !isNaN(v)).sort((a, b) => a - b); if (hKeys.length === 0) return PRICE_UNPRICEABLE; if (h > hKeys[hKeys.length - 1]) return PRICE_UNPRICEABLE; const targetH = hKeys.find(hk => h <= hk); if (targetH === undefined) return PRICE_UNPRICEABLE; const widthRow = matrix[targetH]; if (!widthRow) return PRICE_UNPRICEABLE; const wKeys = Object.keys(widthRow).map(Number).filter(v => !isNaN(v)).sort((a, b) => a - b); if (wKeys.length === 0) return PRICE_UNPRICEABLE; if (w > wKeys[wKeys.length - 1]) return PRICE_UNPRICEABLE; const targetW = wKeys.find(wk => w <= wk); if (targetW === undefined) return PRICE_UNPRICEABLE; const price = widthRow[targetW]; if (typeof price !== 'number' || isNaN(price)) return PRICE_UNPRICEABLE; return price; }
+    function getMatrixLimitsForMatrix(matrix) { if (!matrix) return null; const hKeys = Object.keys(matrix).map(Number).filter(v => !isNaN(v)).sort((a, b) => a - b); if (hKeys.length === 0) return null; const lastH = hKeys[hKeys.length - 1]; const widthRow = matrix[lastH]; if (!widthRow) return null; const wKeys = Object.keys(widthRow).map(Number).filter(v => !isNaN(v)).sort((a, b) => a - b); if (wKeys.length === 0) return null; const lastW = wKeys[wKeys.length - 1]; return { lastW: lastW, lastH: lastH }; }
+    function getMatrixLimitsForCollection(prod) { if (!prod) return null; const matrix = STATE.data.pricing[(prod.Price_Group || '').trim()]; return getMatrixLimitsForMatrix(matrix); }
+    function checkConstraint(row, actualW, actualH) { if (!row) return true; const minW = parseFloat(row.Min_Width); const maxW = parseFloat(row.Max_Width); const minH = parseFloat(row.Min_Height); const maxH = parseFloat(row.Max_Height); if (!isNaN(minW) && actualW < minW) return false; if (!isNaN(maxW) && maxW > 0 && actualW > maxW) return false; if (!isNaN(minH) && actualH < minH) return false; if (!isNaN(maxH) && maxH > 0 && actualH > maxH) return false; return true; }
+    function buildConstraintHint(lift, actualW, actualH) { if (!lift) return ''; const minW = parseFloat(lift.Min_Width); const maxW = parseFloat(lift.Max_Width); const minH = parseFloat(lift.Min_Height); const maxH = parseFloat(lift.Max_Height); const out = []; if (!isNaN(minW) && actualW < minW) out.push('min width ' + minW + '"'); if (!isNaN(maxW) && maxW > 0 && actualW > maxW) out.push('max width ' + maxW + '"'); if (!isNaN(minH) && actualH < minH) out.push('min height ' + minH + '"'); if (!isNaN(maxH) && maxH > 0 && actualH > maxH) out.push('max height ' + maxH + '"'); return out.length ? 'Requires ' + out.join(', ') : ''; }
+    function populateSizeDropdowns() { const wSel = document.getElementById('width-whole'); const hSel = document.getElementById('height-whole'); if (!wSel || !hSel) return; const prod = (STATE.data.products || []).find(p => p.Collection_ID === STATE.selections.collectionId); const matrixLimits = getMatrixLimitsForCollection(prod); const allMaxW = (STATE.data.products || []).reduce((acc, p) => { const v = parseFloat(p.Max_Width); if (!isNaN(v) && v > 0) acc.push(v); return acc; }, []); const allMaxH = (STATE.data.products || []).reduce((acc, p) => { const v = parseFloat(p.Max_Height); if (!isNaN(v) && v > 0) acc.push(v); return acc; }, []); const fallbackMaxW = allMaxW.length > 0 ? Math.max(...allMaxW) : 120; const fallbackMaxH = allMaxH.length > 0 ? Math.max(...allMaxH) : 120; const collectionMaxW = prod && !isNaN(parseFloat(prod.Max_Width)) && parseFloat(prod.Max_Width) > 0 ? parseFloat(prod.Max_Width) : fallbackMaxW; const collectionMaxH = prod && !isNaN(parseFloat(prod.Max_Height)) && parseFloat(prod.Max_Height) > 0 ? parseFloat(prod.Max_Height) : fallbackMaxH; const matrixMaxW = matrixLimits ? matrixLimits.lastW : 120; const matrixMaxH = matrixLimits ? matrixLimits.lastH : 120; const capW = Math.max(SIZE_HARD_MIN_W, Math.floor(Math.min(collectionMaxW, matrixMaxW))); const capH = Math.max(SIZE_HARD_MIN_H, Math.floor(Math.min(collectionMaxH, matrixMaxH))); const widths = []; for (let v = SIZE_HARD_MIN_W; v <= capW; v++) widths.push(v); const heights = []; for (let v = SIZE_HARD_MIN_H; v <= capH; v++) heights.push(v); const selW = STATE.selections.width; const selH = STATE.selections.height; wSel.innerHTML = widths.map(v => '<option value="' + v + '" ' + (v === selW ? 'selected' : '') + '>' + v + '"</option>').join(''); hSel.innerHTML = heights.map(v => '<option value="' + v + '" ' + (v === selH ? 'selected' : '') + '>' + v + '"</option>').join(''); }
+    function revalidateSelections() { const actualW = STATE.selections.actualWidth; const actualH = STATE.selections.actualHeight; const prod = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); if (prod && !checkConstraint(prod, actualW, actualH)) { STATE.selections.collectionId = ''; STATE.selections.colorName = ''; } const lift = STATE.data.lifts.find(l => l.Lift_ID === STATE.selections.liftId); if (lift && !checkConstraint(lift, actualW, actualH)) { STATE.selections.liftId = ''; } Object.keys(STATE.selections.accessorySelections).forEach(cat => { const id = STATE.selections.accessorySelections[cat]; if (!id) return; const acc = STATE.data.accessories.find(a => a.Accessory_ID === id); if (acc && !checkConstraint(acc, actualW, actualH)) { delete STATE.selections.accessorySelections[cat]; delete STATE.selections.accColorSelections[id]; delete STATE.selections.accSubSelections[id]; } }); }
+    function resolveCollectionImageUrl(cid) { const prod = STATE.data.products.find(p => p.Collection_ID === cid); if (prod) { const raw = (prod.Collection_Image || '').toString(); const trimmed = raw.trim(); if (trimmed) { return trimmed; } } return COLLECTION_DEFAULT_IMAGE; }
+    function withCacheBuster(url) { const buster = 'orion_v=' + Date.now(); if (!url) return url; if (url.indexOf('?') === -1) return url + '?' + buster; const cleaned = url.split('&').filter(p => !p.startsWith('orion_v=')).join('&'); return cleaned + (cleaned ? '&' : '') + buster; }
+    function showCollectionImage(cid) { const layer = el.collectionLayer(); const img = el.collectionImg(); if (!layer || !img) return; const url = resolveCollectionImageUrl(cid); const finalUrl = withCacheBuster(url); const prod = STATE.data.products.find(p => p.Collection_ID === cid); const altText = (prod ? prod.Collection_Name : 'Fabric') + ' — fabric family'; img.onerror = () => { if (img.dataset.fallbackTried === '1') return; img.dataset.fallbackTried = '1'; img.src = withCacheBuster(COLLECTION_DEFAULT_IMAGE); }; img.dataset.fallbackTried = '0'; img.src = finalUrl; img.alt = altText; img.classList.add('is-active'); layer.classList.add('is-visible'); layer.setAttribute('aria-hidden', 'false'); }
+    function hideCollectionImage() { const layer = el.collectionLayer(); const img = el.collectionImg(); if (layer) { layer.classList.remove('is-visible'); layer.setAttribute('aria-hidden', 'true'); } if (img) img.classList.remove('is-active'); }
+    function showColorSwatch(cid, colorName) { const colors = STATE.data.colors[cid] || []; const c = colors.find(x => x.Color_Name === colorName); if (!c) return; const img = el.collectionImg(); const layer = el.collectionLayer(); if (img) { img.onerror = () => { if (img.dataset.fallbackTried === '1') return; img.dataset.fallbackTried = '1'; img.src = withCacheBuster(COLLECTION_DEFAULT_IMAGE); }; img.dataset.fallbackTried = '0'; img.src = withCacheBuster(c.Image_URL); img.alt = c.Color_Name + ' — swatch detail'; img.classList.add('is-active'); } if (layer) { layer.classList.add('is-visible'); layer.setAttribute('aria-hidden', 'false'); } }
+    function setupSwatchRailOverflow() { document.querySelectorAll('.fabric-swatch-rail-wrap .fabric-rail-btn').forEach(btn => btn.remove()); }
+    function setupPaletteStrip() { const wraps = document.querySelectorAll('.fabric-swatch-rail-wrap'); wraps.forEach(wrap => { const rail = wrap.querySelector('.fabric-swatch-rail'); if (!rail) return; const labels = Array.from(rail.querySelectorAll('label')); if (labels.length === 0) return; let strip = null; const parent = wrap.parentNode; if (parent) { for (const child of parent.children) { if (child !== wrap && child.classList && child.classList.contains('palette-strip')) { strip = child; break; } } } if (!strip) { strip = document.createElement('div'); strip.className = 'palette-strip'; parent.insertBefore(strip, wrap); } else { strip.innerHTML = ''; } const tooFew = labels.length < 6; const isMobileViewport = window.innerWidth < 1024; if (tooFew || isMobileViewport) { strip.classList.add('is-hidden'); return; } strip.classList.remove('is-hidden'); labels.forEach((label, i) => { const input = label.querySelector('input[type="radio"]'); const inner = label.querySelector('.swatch-inner'); if (!input || !inner) return; const isSelected = input.checked; const bg = inner.style.backgroundImage || ''; const seg = document.createElement('div'); seg.className = 'palette-strip-seg' + (isSelected ? ' is-selected' : ''); seg.style.backgroundImage = bg; seg.dataset.idx = i; seg.setAttribute('aria-label', input.value || 'Color'); seg.setAttribute('role', 'button'); seg.setAttribute('tabindex', '0'); strip.appendChild(seg); }); const segments = strip.querySelectorAll('.palette-strip-seg'); segments.forEach(seg => { const idx = parseInt(seg.dataset.idx, 10); const onActivate = () => { const target = labels[idx]; if (!target) return; const targetInput = target.querySelector('input[type="radio"]'); if (!targetInput) return; targetInput.checked = true; targetInput.dispatchEvent(new Event('change', { bubbles: true })); segments.forEach(s => s.classList.toggle('is-selected', parseInt(s.dataset.idx, 10) === idx)); if (rail.scrollTo) { const r0 = labels[0].getBoundingClientRect(); const r1 = labels[1] ? labels[1].getBoundingClientRect() : null; const stride = (r1 && r1.left > r0.left) ? (r1.left - r0.left) : (r0.width + 14); const targetScroll = Math.max(0, Math.min(rail.scrollWidth - rail.clientWidth, idx * stride)); rail.scrollLeft = targetScroll; } }; seg.addEventListener('click', onActivate); seg.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onActivate(); } }); }); }); }
+    function selectCollectionOnly(cid) { STATE.selections.collectionId = cid; STATE.selections.colorName = ''; document.querySelectorAll('#options-block [data-rail]').forEach(rail => { rail.querySelectorAll('label').forEach(label => { const input = label.querySelector('input[type="radio"]'); if (!input) return; const [valCid] = (input.value || '').split('|'); input.checked = (valCid === cid); }); }); hideSwatchDetail(); showCollectionImage(cid); renderUI(); if (typeof updatePricing === 'function') updatePricing(); if (typeof applySectionGates === 'function') applySectionGates(); }
+    window.__orionSelectCollectionCard = function(cid) { try { selectCollectionOnly(cid); } catch (e) { console.warn('select card failed', e); } };
+    function selectColorFromGrid(cid, color) { STATE.selections.collectionId = cid; STATE.selections.colorName = color; const matchingInput = document.querySelector('#options-block input[name="color"][value="' + cid + '|' + (color || '').replace(/"/g, '\\"') + '"]'); if (matchingInput) { matchingInput.checked = true; } const colors = STATE.data.colors[cid] || []; const cObj = colors.find(c => c.Color_Name === color); if (cObj && cObj.Image_URL) { showSwatchDetail(cObj.Image_URL); showColorSwatch(cid, color); } else { showCollectionImage(cid); } renderUI(); if (typeof updatePricing === 'function') updatePricing(); if (typeof applySectionGates === 'function') applySectionGates(); }
+    function setupSectionProgress() { if (document.getElementById('section-progress')) return; const container = document.createElement('div'); container.id = 'section-progress'; container.className = 'section-progress'; container.setAttribute('role', 'navigation'); container.setAttribute('aria-label', 'Configurator sections'); container.innerHTML = SECTION_PROGRESS_MAP.map((s, i) => '<button type="button" class="section-progress-dot" data-target="' + s.key + '" data-index="' + i + '" aria-label="Jump to ' + s.label + '"><span class="section-progress-fill"></span><span class="section-progress-tooltip">' + s.label + '</span></button>').join(''); document.body.appendChild(container); const dots = Array.from(container.querySelectorAll('.section-progress-dot')); const sections = SECTION_PROGRESS_MAP.map(s => ({ meta: s, el: document.querySelector('[data-section="' + s.key + '"]') })).filter(s => s.el); const onDotClick = (e) => { const key = e.currentTarget.dataset.target; const sectionEl = document.querySelector('[data-section="' + key + '"]'); if (!sectionEl) return; if (sectionEl.classList.contains('is-locked')) { showToast('Complete the previous step first.'); return; } const isDesktop = window.innerWidth >= 1024; const headerOffset = isDesktop ? 24 : (window.innerWidth < 1024 ? 320 : 24); const top = sectionEl.getBoundingClientRect().top + window.scrollY - headerOffset; window.scrollTo({ top, behavior: 'smooth' }); }; dots.forEach(d => d.addEventListener('click', onDotClick)); const updateProgress = () => { if (isMobile()) { container.classList.remove('is-visible'); return; } container.classList.add('is-visible'); const vh = window.innerHeight; const readingLine = vh * 0.4; let activeIdx = -1; for (let i = 0; i < sections.length; i++) { const rect = sections[i].el.getBoundingClientRect(); if (rect.top <= readingLine && rect.bottom > readingLine) { activeIdx = i; break; } } if (activeIdx === -1) { let best = -1; let bestDist = Infinity; for (let i = 0; i < sections.length; i++) { const rect = sections[i].el.getBoundingClientRect(); const dist = Math.abs(rect.top - readingLine); if (dist < bestDist) { bestDist = dist; best = i; } } activeIdx = best; } let fill = 0; if (activeIdx >= 0) { const rect = sections[activeIdx].el.getBoundingClientRect(); const total = rect.height; const passed = Math.max(0, Math.min(total, readingLine - rect.top)); fill = total > 0 ? Math.max(0.15, passed / total) : 0.15; } dots.forEach((dot, i) => { dot.classList.toggle('is-active', i === activeIdx); dot.classList.toggle('is-passed', activeIdx > i); const fillEl = dot.querySelector('.section-progress-fill'); if (fillEl) { if (i === activeIdx) fillEl.style.height = (fill * 100).toFixed(1) + '%'; else if (i < activeIdx) fillEl.style.height = '100%'; else fillEl.style.height = '0%'; } }); }; let ticking = false; const onScroll = () => { if (ticking) return; ticking = true; requestAnimationFrame(() => { updateProgress(); ticking = false; }); }; window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('resize', onScroll, { passive: true }); if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener('change', onScroll); else if (MOBILE_MQ.addListener) MOBILE_MQ.addListener(onScroll); updateProgress(); setTimeout(updateProgress, 50); }
+    function applySectionGates() { try { const s = STATE.selections; const validity = evaluateDimensionValidity(); const sectionRules = [{ key: 'fabric-type', unlocked: true }, { key: 'fabric-collection', unlocked: !!s.fabricType }, { key: 'mount', unlocked: !!(s.collectionId && s.colorName) }, { key: 'size', unlocked: !!s.mount }, { key: 'controls', unlocked: validity.ok }, { key: 'details', unlocked: !!s.liftId }, { key: 'services', unlocked: !!s.liftId }]; sectionRules.forEach(rule => { const sec = document.querySelector('[data-section="' + rule.key + '"]'); if (!sec) return; if (rule.unlocked) { sec.classList.remove('is-locked'); sec.removeAttribute('aria-disabled'); } else { sec.classList.add('is-locked'); sec.setAttribute('aria-disabled', 'true'); } }); } catch (e) { console.warn('applySectionGates failed', e); } }
+    function showSizeWarning(reason) { const warn = el.sizeWarning(); if (!warn) return; if (reason) { warn.innerText = reason; warn.classList.remove('hidden'); } else { warn.classList.add('hidden'); } }
+    function updateLoader(msg) { console.log('Orion:', msg); const p = el.loaderText(); if (p) p.innerText = msg; }
+    function showToast(message, duration = 3500) { const toast = el.toast(); const msg = el.toastMsg(); if (!toast || !msg) return; msg.innerText = message; toast.classList.add('is-visible'); clearTimeout(showToast._tid); showToast._tid = setTimeout(() => toast.classList.remove('is-visible'), duration); }
+    function setSolarHero(fabricType) { const candidates = Array.from(document.querySelectorAll('#preview-block [data-fabric-type]')); if (candidates.length === 0) { return; } const target = String(fabricType || '').trim(); let matched = null; candidates.forEach(img => { if ((img.dataset.fabricType || '').trim() === target) matched = img; }); if (matched) { candidates.forEach(img => { img.style.display = (img === matched) ? '' : 'none'; }); } else { candidates.forEach(img => { img.style.display = 'none'; }); } }
+    function showSwatchDetail(imageUrl) { const layer = document.getElementById('swatch-detail-layer'); const img = document.getElementById('swatch-detail-img'); if (!layer || !img || !imageUrl) return; if (STATE.activeSwatchImage === imageUrl && layer.classList.contains('is-visible')) return; STATE.activeSwatchImage = imageUrl; STATE.activeSwatchImage = imageUrl; STATE.swatchDetailActive = true; img.src = imageUrl; layer.classList.remove('is-visible'); void layer.offsetWidth; layer.classList.add('is-visible'); }
+    function hideSwatchDetail() { const layer = document.getElementById('swatch-detail-layer'); if (!layer) return; layer.classList.remove('is-visible'); STATE.activeSwatchImage = ''; STATE.swatchDetailActive = false; }
+    window.hideSwatchDetail = hideSwatchDetail;
+    function setupSwatchDetailClose() { const closeBtn = document.querySelector('#swatch-detail-layer .swatch-detail-close'); if (!closeBtn) return; closeBtn.onclick = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } hideSwatchDetail(); const cid = STATE.selections.collectionId; if (cid) showCollectionImage(cid); if (typeof updatePricing === 'function') updatePricing(); }; }
+    function setupSwatchAutoHide() { const fabricSections = document.querySelectorAll('[data-section="fabric-type"], [data-section="fabric-collection"]'); if (!fabricSections.length || typeof IntersectionObserver === 'undefined') return; const observer = new IntersectionObserver((entries) => { const anyVisible = entries.some(e => e.isIntersecting && e.intersectionRatio >= 0.15); if (!anyVisible) hideSwatchDetail(); }, { threshold: [0, 0.15, 0.3, 0.3, 0.5] }); fabricSections.forEach(sec => observer.observe(sec)); }
+    function setMountView(subState) { const layer = document.getElementById('mount-state-layer'); if (!layer) return; if (subState !== 'comparison' && subState !== 'inside' && subState !== 'outside') return; if (STATE.activeSwatchImage === subState) return; STATE.activeMountView = subState; const imgs = layer.querySelectorAll('.mount-state-img'); imgs.forEach(img => img.classList.toggle('is-active', img.id === 'mount-img-' + subState)); }
+    function showMountLayer() { const layer = document.getElementById('mount-state-layer'); if (!layer) return; syncMountImages(); if (STATE.selections.mount === 'inside') setMountView('inside'); else if (STATE.selections.mount === 'outside') setMountView('outside'); else setMountView('comparison'); layer.classList.add('is-visible'); layer.setAttribute('aria-hidden', 'false'); hideCollectionImage(); }
+    function hideMountLayer() { const layer = document.getElementById('mount-state-layer'); if (!layer) return; layer.classList.remove('is-visible'); layer.setAttribute('aria-hidden', 'true'); }
+    function rebuildLiftLayer() { const layer = document.getElementById('lift-state-layer'); if (!layer) return; layer.innerHTML = ''; const prodForHero = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); const heroSrc = (prodForHero && prodForHero.Lift_Family_Image_URL && prodForHero.Lift_Family_Image_URL.trim() !== '') ? prodForHero.Lift_Family_Image_URL : OPERATION_HERO_FALLBACK; const defaultImg = document.createElement('img'); defaultImg.id = 'lift-img-default'; defaultImg.className = 'lift-state-img is-active'; defaultImg.alt = prodForHero ? (prodForHero.Collection_Name + ' — all available lift systems') : 'Operation — all available lift systems'; defaultImg.src = heroSrc; layer.appendChild(defaultImg); if (!prodForHero) return; const lifts = STATE.data.lifts.filter(l => { if (l.Vendor !== CONTEXT.vendor) return false; return (l.ProductLiftImages || {}).hasOwnProperty(CONTEXT.productType); }); lifts.forEach(l => { const liftUrl = (l.ProductLiftImages || {})[CONTEXT.productType] || ''; const img = document.createElement('img'); img.id = 'lift-img-' + l.Lift_ID; img.className = 'lift-state-img'; img.alt = l.Lift_Name; img.src = liftUrl || OPERATION_HERO_FALLBACK; layer.appendChild(img); }); const validLiftIds = lifts.map(l => l.Lift_ID); if (STATE.selections.liftId && validLiftIds.includes(STATE.selections.liftId)) { STATE.activeLiftView = STATE.selections.liftId; } else { STATE.activeLiftView = 'default'; } const imgs = layer.querySelectorAll('.lift-state-img'); imgs.forEach(img => img.classList.toggle('is-active', img.id === 'lift-img-' + STATE.activeLiftView)); }
+    function setLiftView(liftId) { const layer = document.getElementById('lift-state-layer'); if (!layer) return; if (STATE.activeLiftView === liftId) return; STATE.activeLiftView = liftId; const imgs = layer.querySelectorAll('.lift-state-img'); imgs.forEach(img => img.classList.toggle('is-active', img.id === 'lift-img-' + liftId)); }
+    function showLiftLayer() { const layer = document.getElementById('lift-state-layer'); if (!layer) return; rebuildLiftLayer(); if (STATE.selections.liftId) { setLiftView(STATE.selections.liftId); } else { setLiftView('default'); } layer.classList.add('is-visible'); layer.setAttribute('aria-hidden', 'false'); hideCollectionImage(); }
+    function hideLiftLayer() { const layer = document.getElementById('lift-state-layer'); if (!layer) return; layer.classList.remove('is-visible'); layer.setAttribute('aria-hidden', 'true'); }
+    function getCategoryImageUrl(category) { const prod = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); if (!prod) return FALLBACK_ACCESSORY_IMAGES[category] || ACCESSORY_DEFAULT_IMAGE; const productType = CONTEXT.productType; const vendorAccs = STATE.data.accessories.filter(a => a.Vendor === CONTEXT.vendor && a.Accessory_Category === category); if (vendorAccs.length === 0) return FALLBACK_ACCESSORY_IMAGES[category] || ACCESSORY_DEFAULT_IMAGE; const withProductImg = vendorAccs.find(a => { const url = (a.ProductAccessoryImages || {})[productType]; return url && url.trim() !== ''; }); if (withProductImg) return withProductImg.ProductAccessoryImages[productType]; const hero = vendorAccs.find(a => (a.Is_Category_Hero || '').toLowerCase() === 'true' && a.Accessory_Image_URL && a.Accessory_Image_URL.trim() !== ''); if (hero) return hero.Accessory_Image_URL; const explicitCategory = vendorAccs.find(a => a.Accessory_Category_Image_URL && a.Accessory_Category_Image_URL.trim() !== ''); if (explicitCategory) return explicitCategory.Accessory_Category_Image_URL; const anyWithImage = vendorAccs.find(a => a.Accessory_Image_URL && a.Accessory_Image_URL.trim() !== ''); if (anyWithImage) return anyWithImage.Accessory_Image_URL; return FALLBACK_ACCESSORY_IMAGES[category] || ACCESSORY_DEFAULT_IMAGE; }
+    function getColorForAccessory(acc, colorId) { if (!acc || !colorId) return null; const groupId = acc.Color_Group_ID; if (!groupId) return null; return STATE.data.accColors.find(c => c.Group_ID === groupId && c.Color_ID === colorId) || null; }
+    function accessoryHasColors(acc) { if (!acc) return false; const groupId = acc.Color_Group_ID; if (!groupId) return false; return STATE.data.accColors.some(c => c.Group_ID === groupId); }
+    function resolveAccessoryImage(acc) { if (!acc) return null; const productType = CONTEXT.productType; let url = ''; let alt = acc.Accessory_Name || ''; const colorId = STATE.selections.accColorSelections[acc.Accessory_ID]; if (colorId && productType && acc.Accessory_ID) { const colorKey = productType + '|' + acc.Accessory_ID + '|' + colorId; const variantUrl = STATE.data.productAccColorImages[colorKey]; if (variantUrl && variantUrl.trim() !== '') { url = variantUrl; const color = getColorForAccessory(acc, colorId); if (color) alt = acc.Accessory_Name + ' — ' + color.Color_Name; } } if (!url) { url = ((acc.ProductAccessoryImages || {})[productType] || ''); } if (!url || url.trim() === '') url = ACCESSORY_FAMILY_PLACEHOLDER; return { url: url, alt: alt }; }
+    function getDefaultSubOption(acc) { if (!acc) return ''; const subOptions = (acc.Sub_Options || '').split(',').map(s => s.trim()).filter(Boolean); if (subOptions.length === 0) return ''; const standard = subOptions.find(s => s.toLowerCase().includes('standard')); return standard || subOptions[0]; }
+    function applyDefaultSubOption(accId) { const acc = STATE.data.accessories.find(a => a.Accessory_ID === accId); if (!acc) return; if (STATE.selections.accSubSelections[accId]) return; const def = getDefaultSubOption(acc); if (def) STATE.selections.accSubSelections[accId] = def; }
+    function isAccessoryComplete(acc) { if (!acc) return false; if (!accessoryHasColors(acc)) return true; const colorId = STATE.selections.accColorSelections[acc.Accessory_ID]; return !!colorId; }
+    function rebuildAccessoryLayer() { const layer = document.getElementById('accessory-state-layer'); if (!layer) return; layer.innerHTML = ''; const aesthetic = STATE.aestheticCategories || []; const motorized = STATE.motorizedCategories || []; const prodForFamily = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); const familyUrl = prodForFamily ? (prodForFamily.Accessory_Family_Image_URL || '').toString().trim() : ''; let defaultUrl = familyUrl || ACCESSORY_FAMILY_PLACEHOLDER; let defaultAlt = 'Accessory details'; if (aesthetic.length > 0) { defaultAlt = aesthetic[0] + ' overview'; } const defaultImg = document.createElement('img'); defaultImg.id = 'accessory-img-default'; defaultImg.className = 'accessory-state-img is-active'; defaultImg.alt = defaultAlt; defaultImg.src = defaultUrl; layer.appendChild(defaultImg); aesthetic.forEach(cat => { const url = getCategoryImageUrl(cat); const img = document.createElement('img'); img.id = 'accessory-img-cat-' + cat.replace(/\s+/g, '-'); img.className = 'accessory-state-img'; img.alt = cat + ' overview'; img.src = url; layer.appendChild(img); }); motorized.forEach(cat => { const url = getCategoryImageUrl(cat); const img = document.createElement('img'); img.id = 'accessory-img-cat-' + cat.replace(/\s+/g, '-'); img.className = 'accessory-state-img'; img.alt = cat + ' overview'; img.src = url; layer.appendChild(img); }); let selectedAcc = null; for (const cat of aesthetic) { const selId = STATE.selections.accessorySelections[cat]; if (selId) { selectedAcc = STATE.data.accessories.find(a => a.Accessory_ID === selId); if (selectedAcc) break; } } if (selectedAcc) { const resolved = resolveAccessoryImage(selectedAcc); if (resolved) { const img = document.createElement('img'); img.id = 'accessory-img-selected'; img.className = 'accessory-state-img'; img.alt = resolved.alt; img.src = resolved.url; layer.appendChild(img); STATE.activeAccessoryView = 'selected'; } } let targetView; if (selectedAcc) targetView = 'selected'; else if (STATE.activeAccessoryCategory && aesthetic.includes(STATE.activeAccessoryCategory)) { const candidate = 'cat-' + STATE.activeAccessoryCategory.replace(/\s+/g, '-'); targetView = layer.querySelector('#accessory-img-' + candidate) ? candidate : 'default'; } else targetView = 'default'; STATE.activeAccessoryView = targetView; const imgs = layer.querySelectorAll('.accessory-state-img'); imgs.forEach(img => img.classList.toggle('is-active', img.id === 'accessory-img-' + targetView)); }
+    function setAccessoryView(viewId) { const layer = document.getElementById('accessory-state-layer'); if (!layer) return; if (STATE.activeAccessoryView === viewId) return; if (!layer.querySelector('#accessory-img-' + viewId)) viewId = 'default'; STATE.activeAccessoryView = viewId; const imgs = layer.querySelectorAll('.accessory-state-img'); imgs.forEach(img => img.classList.toggle('is-active', img.id === 'accessory-img-' + viewId)); }
+    function showAccessoryLayer() { const layer = document.getElementById('accessory-state-layer'); if (!layer) return; rebuildAccessoryLayer(); layer.classList.add('is-visible'); layer.setAttribute('aria-hidden', 'false'); hideCollectionImage(); }
+    function hideAccessoryLayer() { const layer = document.getElementById('accessory-state-layer'); if (!layer) return; layer.classList.remove('is-visible'); layer.setAttribute('aria-hidden', 'true'); }
+    let lastActivatedLayer = null; let lastClaimedSectionEl = null; let scrollTicking = false;
+    function applyViewportState(layer, claimedSectionEl) { lastActivatedLayer = layer; lastClaimedSectionEl = claimedSectionEl; const sectionKey = claimedSectionEl ? claimedSectionEl.dataset.section : ''; STATE.activeAccessorySection = sectionKey; hideMountLayer(); hideLiftLayer(); hideAccessoryLayer(); if (layer === 'mount') showMountLayer(); else if (layer === 'lift') showLiftLayer(); else if (layer === 'accessory') showAccessoryLayer(); else if (!layer && STATE.selections.collectionId && !STATE.selections.colorName) { showCollectionImage(STATE.selections.collectionId); } else if (!layer) { hideCollectionImage(); } }
+    function setupViewportStateMachine() { const mountSection = document.querySelector('[data-section="mount"]'); const controlsSection = document.querySelector('[data-section="controls"]'); const detailsSection = document.querySelector('[data-section="details"]'); if (!mountSection || !controlsSection || !detailsSection) return; const ownerSections = [{ el: mountSection, layer: 'mount', key: 'mount' }, { el: controlsSection, layer: 'lift', key: 'controls' }, { el: detailsSection, layer: 'accessory', key: 'details' }]; const HYSTERESIS_BELOW = 100; const HYSTERESIS_ABOVE = 40; const computeTrigger = () => { const sticky = document.querySelector('#preview-block .preview-sticky'); if (!sticky) return 0; const r = sticky.getBoundingClientRect(); if (isMobile()) return r.bottom; return r.top; }; const evaluate = () => { const trigger = computeTrigger(); const unlocked = ownerSections.filter(s => !s.el.classList.contains('is-locked')); if (unlocked.length !== ownerSections.length) { const wasActive = lastActivatedLayer; const stillUnlocked = ownerSections.find(s => s.layer === wasActive && !s.el.classList.contains('is-locked')); if (!stillUnlocked) { hideMountLayer(); hideLiftLayer(); hideAccessoryLayer(); } } const mountR = mountSection.getBoundingClientRect(); const controlsR = controlsSection.getBoundingClientRect(); if (mountSection.classList.contains('is-locked')) { if (mountR.top <= trigger + HYSTERESIS_BELOW) { applyViewportState(null, null); } return; } const mountReached = mountR.top <= trigger + HYSTERESIS_BELOW; if (!mountReached) { applyViewportState(null, null); return; } const controlsApproaching = controlsR.top <= trigger + HYSTERESIS_BELOW; if (!controlsApproaching) { applyViewportState('mount', mountSection); return; } let activeIdx = -1; for (let i = 0; i < unlocked.length; i++) { const r = unlocked[i].el.getBoundingClientRect(); const sectionTop = r.top; if (sectionTop > trigger + HYSTERESIS_BELOW) break; if (i === 0) { if (sectionTop <= trigger + HYSTERESIS_BELOW && sectionTop >= trigger - HYSTERESIS_ABOVE * 4) activeIdx = 0; continue; } const prev = unlocked[i - 1]; const prevR = prev.el.getBoundingClientRect(); if (prevR.bottom <= trigger - HYSTERESIS_ABOVE) activeIdx = i; else break; } if (activeIdx === -1) applyViewportState('mount', mountSection); else { const candidate = unlocked[activeIdx]; applyViewportState(candidate.layer, candidate.el); } }; const onScroll = () => { if (scrollTicking) return; scrollTicking = true; requestAnimationFrame(() => { evaluate(); scrollTicking = false; }); }; window.addEventListener('scroll', onScroll, { passive: true }); window.addEventListener('resize', onScroll, { passive: true }); if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener('change', onScroll); else if (MOBILE_MQ.addListener) MOBILE_MQ.addListener(onScroll); applyViewportState(null, null); setTimeout(evaluate, 50); }
+    function accessoryMatchesLift(a, currentLiftId) { const compatLifts = (a.Compatible_Lift_IDs || '').split(',').map(s => s.trim()).filter(Boolean); if (compatLifts.length > 0 && currentLiftId && !compatLifts.includes(currentLiftId) && !compatLifts.includes('ALL')) return false; return true; }
+    function determineVisibleCategories() { const prod = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); if (!prod) { STATE.visibleAccessoryCategories = []; STATE.motorizedCategories = []; STATE.aestheticCategories = []; return; } const lift = STATE.data.lifts.find(l => l.Lift_ID === STATE.selections.liftId); const currentLiftId = lift?.Lift_ID || ''; const actualW = STATE.selections.actualWidth; const actualH = STATE.selections.actualHeight; const allCategories = [...new Set(STATE.data.accessories.filter(a => a.Vendor === CONTEXT.vendor).map(a => a.Accessory_Category).filter(Boolean))]; const visible = allCategories.filter(cat => { const accsInCat = STATE.data.accessories.filter(a => { if (a.Vendor !== CONTEXT.vendor) return false; if (a.Accessory_Category !== cat) return false; if (!(a.ProductAccessoryImages || {}).hasOwnProperty(CONTEXT.productType)) return false; return checkConstraint(a, actualW, actualH); }); return accsInCat.some(a => accessoryMatchesLift(a, currentLiftId)); }); visible.sort((a, b) => { const ai = CATEGORY_ORDER.indexOf(a); const bi = CATEGORY_ORDER.indexOf(b); if (ai === -1 && bi === -1) return a.localeCompare(b); if (ai === -1) return 1; if (bi === -1) return -1; return ai - bi; }); STATE.visibleAccessoryCategories = visible; STATE.motorizedCategories = visible.filter(c => MOTORIZED_CATEGORIES.includes(c)); STATE.aestheticCategories = visible.filter(c => !MOTORIZED_CATEGORIES.includes(c)); }
+    function renderMotorizedAccessories() { const container = el.motorAccessories(); if (!container) return; const lift = STATE.data.lifts.find(l => l.Lift_ID === STATE.selections.liftId); const liftCategory = (lift?.Lift_Category || '').toLowerCase(); const motorized = STATE.motorizedCategories || []; if (motorized.length === 0 || liftCategory !== 'motorized') { container.innerHTML = ''; container.style.display = 'none'; return; } container.style.display = ''; const prod = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); if (!prod) { container.innerHTML = ''; return; } const actualW = STATE.selections.actualWidth; const actualH = STATE.selections.actualHeight; const currentLiftId = lift?.Lift_ID || ''; container.innerHTML = motorized.map(cat => { const accsInCat = STATE.data.accessories.filter(a => { if (a.Vendor !== CONTEXT.vendor) return false; if (a.Accessory_Category !== cat) return false; if (!(a.ProductAccessoryImages || {}).hasOwnProperty(CONTEXT.productType)) return false; if (!checkConstraint(a, actualW, actualH)) return false; return accessoryMatchesLift(a, currentLiftId); }); const selectedId = STATE.selections.accessorySelections[cat] || ''; const cards = accsInCat.map(a => { const isSelected = selectedId === a.Accessory_ID; const colorGroupId = a.Color_Group_ID; const colors = colorGroupId ? STATE.data.accColors.filter(c => c.Group_ID === colorGroupId) : []; const storedColorId = STATE.selections.accColorSelections[a.Accessory_ID] || ''; let thumb = ((a.ProductAccessoryImages || {})[CONTEXT.productType] || ''); if (!thumb.trim()) thumb = getCategoryImageUrl(cat); return '<div class="motor-card ' + (isSelected ? 'is-selected' : '') + '" data-acc-id="' + a.Accessory_ID + '" data-cat="' + cat + '" onclick="window.selectMotorAccessory(\'' + cat + '\', \'' + a.Accessory_ID + '\')"><div class="motor-card-thumb" style="background-image: url(\'' + thumb + '\');"></div><div class="motor-card-name">' + a.Accessory_Name + '</div>' + (colors.length > 0 ? '<div class="motor-card-swatch-row" onclick="event.stopPropagation();">' + colors.map(c => '<div class="motor-card-swatch ' + (storedColorId === c.Color_ID ? 'is-active' : '') + '" onclick="window.selectMotorAccessoryColor(\'' + a.Accessory_ID + '\', \'' + c.Color_ID + '\', \'' + cat + '\')" title="' + c.Color_Name + '"><div class="motor-card-swatch-inner" style="background-color: ' + c.Hex_Value + ';"></div></div>').join('') + '</div>' : '') + '<div class="motor-card-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div>'; }).join(''); return '<div class="motor-rail" data-rail-cat="' + cat + '"><div class="motor-rail-header"><div class="motor-rail-title">' + (CATEGORY_LABELS[cat] || cat) + '</div><div class="motor-rail-sub">' + (MOTORIZED_DESCRIPTIONS[cat] || '') + '</div></div><div class="motor-rail-track">' + cards + '</div></div>'; }).join(''); }
+    window.selectMotorAccessory = function(category, accId) { const current = STATE.selections.accessorySelections[category]; if (current === accId) { STATE.selections.accessorySelections[category] = null; } else { STATE.selections.accessorySelections[category] = accId; delete STATE.selections.accColorSelections[accId]; delete STATE.selections.accSubSelections[accId]; applyDefaultSubOption(accId); } renderMotorizedAccessories(); updatePricing(); };
+    window.selectMotorAccessoryColor = function(accId, colorId, category) { STATE.selections.accColorSelections[accId] = colorId; if (!STATE.selections.accessorySelections[category] || STATE.selections.accessorySelections[category] !== accId) { STATE.selections.accessorySelections[category] = accId; delete STATE.selections.accSubSelections[accId]; applyDefaultSubOption(accId); } renderMotorizedAccessories(); updatePricing(); };
+    function renderAestheticCategories() { const container = el.accessories(); if (!container) return; const categories = STATE.aestheticCategories || []; if (categories.length === 0) { container.innerHTML = ''; return; } const prod = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); if (!prod) { container.innerHTML = ''; return; } const actualW = STATE.selections.actualWidth; const actualH = STATE.selections.actualHeight; const lift = STATE.data.lifts.find(l => l.Lift_ID === STATE.selections.liftId); const currentLiftId = lift?.Lift_ID || ''; container.innerHTML = categories.map(cat => { const accsInCat = STATE.data.accessories.filter(a => { if (a.Vendor !== CONTEXT.vendor) return false; if (a.Accessory_Category !== cat) return false; if (!(a.ProductAccessoryImages || {}).hasOwnProperty(CONTEXT.productType)) return false; if (!checkConstraint(a, actualW, actualH)) return false; return accessoryMatchesLift(a, currentLiftId); }); if (accsInCat.length === 0) return ''; const cards = accsInCat.map(a => renderAestheticCard(a, cat)).join(''); return '<div class="acc-category-group" data-group-cat="' + cat + '"><div class="acc-category-group-title">' + (CATEGORY_LABELS[cat] || cat) + '</div><div class="acc-category-group-sub">' + (CATEGORY_SUBS[cat] || '') + '</div><div class="space-y-3">' + cards + '</div></div>'; }).join(''); rebuildAccessoryLayer(); }
+    function renderAestheticCard(a, category) { const subOptions = (a.Sub_Options || '').split(',').map(s => s.trim()).filter(Boolean); const colorGroupId = a.Color_Group_ID; const colors = colorGroupId ? STATE.data.accColors.filter(c => c.Group_ID === colorGroupId) : []; const storedColorId = STATE.selections.accColorSelections[a.Accessory_ID] || ''; const hasUserColor = !!storedColorId; const currentColor = hasUserColor ? colors.find(c => c.Color_ID === storedColorId) : null; const storedSub = STATE.selections.accSubSelections[a.Accessory_ID] || ''; const currentSub = storedSub || (subOptions.length === 1 ? subOptions[0] : '') || ''; const isSelected = STATE.selections.accessorySelections[category] === a.Accessory_ID; const hasSubOptions = subOptions.length > 1; const hasColors = colors.length > 0; let subSibling = ''; if (isSelected && hasSubOptions) { const subPromptText = currentSub ? ('Style: ' + currentSub) : 'Choose a style'; const subPromptClass = currentSub ? 'acc-sub-prompt is-fulfilled' : 'acc-sub-prompt'; subSibling = '<div class="acc-sibling"><div class="' + subPromptClass + '">' + subPromptText + '</div><div class="acc-sub-toggle-row">' + subOptions.map(opt => '<div class="acc-sub-toggle ' + (currentSub === opt ? 'is-active' : '') + '" onclick="window.updateAccSub(\'' + a.Accessory_ID + '\', \'' + opt + '\')">' + opt + '</div>').join('') + '</div></div>'; } let colorSibling = ''; if (isSelected && hasColors) { const colorPromptText = currentColor ? ('Colour: ' + currentColor.Color_Name) : 'Choose a colour'; const colorPromptClass = currentColor ? 'acc-sub-prompt is-fulfilled' : 'acc-sub-prompt'; colorSibling = '<div class="acc-sibling"><div class="' + colorPromptClass + '">' + colorPromptText + '</div><div class="acc-swatch-row">' + colors.map(c => '<div class="acc-swatch-pair" onclick="window.updateAccColor(\'' + a.Accessory_ID + '\', \'' + c.Color_ID + '\')"><div class="acc-color-swatch-lg ' + (storedColorId === c.Color_ID ? 'is-active' : '') + '"><div class="acc-color-swatch-lg-inner" style="background-color: ' + c.Hex_Value + ';"></div></div><div class="acc-color-name">' + c.Color_Name + '</div></div>').join('') + '</div></div>'; } let inlineSummary = ''; if (isSelected) { const parts = []; if (currentSub) parts.push(currentSub); if (currentColor) parts.push(currentColor.Color_Name); if (parts.length > 0) inlineSummary = '<div class="flex items-center gap-2 mt-2"><span class="apple-meta font-semibold text-apple-text">' + parts.join(' • ') + '</span></div>'; } return '<div data-acc-id="' + a.Accessory_ID + '" data-cat="' + category + '"><label class="cursor-pointer w-full block"><input type="radio" name="acc-' + category.replace(/\s+/g, '-') + '" value="' + a.Accessory_ID + '" class="sr-only" ' + (isSelected ? 'checked' : '') + ' onchange="window.selectAccessoryInCategory(\'' + category + '\',\'' + a.Accessory_ID + '\')"><div class="option-card-apple ' + (isSelected ? 'is-selected-card' : '') + '"><div class="flex justify-between items-start w-full"><div class="flex flex-col"><span class="apple-card-title font-semibold">' + a.Accessory_Name + '</span><span class="apple-meta text-apple-text-muted mt-1 font-normal">' + a.Accessory_Description + '</span>' + inlineSummary + '</div><div class="flex flex-col items-end gap-1"><div class="check-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div></div></div></label>' + subSibling + colorSibling + '</div>'; }
+    window.selectAccessoryInCategory = function(category, accId) { STATE.selections.accessorySelections[category] = accId || null; if (accId) { delete STATE.selections.accColorSelections[accId]; delete STATE.selections.accSubSelections[accId]; applyDefaultSubOption(accId); STATE.activeAccessoryCategory = category; rebuildAccessoryLayer(); setAccessoryView('selected'); } else { const catViewId = 'cat-' + category.replace(/\s+/g, '-'); STATE.activeAccessoryCategory = ''; rebuildAccessoryLayer(); setAccessoryView(catViewId); } renderAestheticCategories(); updatePricing(); };
+    window.updateAccColor = function(accId, colorId) { STATE.selections.accColorSelections[accId] = colorId; const acc = STATE.data.accessories.find(a => a.Accessory_ID === accId); if (acc) { STATE.activeAccessoryCategory = acc.Accessory_Category; rebuildAccessoryLayer(); if (colorId) setAccessoryView('selected'); } renderAestheticCategories(); updatePricing(); };
+    window.updateAccSub = function(accId, val) { STATE.selections.accSubSelections[accId] = val; rebuildAccessoryLayer(); setAccessoryView('selected'); renderAestheticCategories(); updatePricing(); }
+    function getMissingSelections() { const missing = []; const s = STATE.selections; if (!s.fabricType) missing.push('an openness factor'); if (!s.collectionId || !s.colorName) missing.push('a fabric collection and color'); if (!s.mount) missing.push('a mount type'); const validity = evaluateDimensionValidity(); if (!validity.ok) missing.push('valid dimensions'); if (!s.liftId) missing.push('an operation method'); if (!s.measurement) missing.push('a measuring option'); if (!s.installation) missing.push('an installation option'); Object.entries(s.accessorySelections).forEach(([cat, accId]) => { if (!accId) return; const acc = STATE.data.accessories.find(a => a.Accessory_ID === accId); if (acc && !isAccessoryComplete(acc)) missing.push('a color for ' + acc.Accessory_Name); }); return missing; }
+    function validateReady() { const s = STATE.selections; let incompleteAcc = null; Object.entries(s.accessorySelections).forEach(([cat, accId]) => { if (!accId || incompleteAcc) return; const acc = STATE.data.accessories.find(a => a.Accessory_ID === accId); if (acc && !isAccessoryComplete(acc)) incompleteAcc = acc; }); const validity = evaluateDimensionValidity(); const isReady = !!(s.collectionId && s.colorName && s.mount && s.liftId && s.measurement && s.installation && !incompleteAcc && validity.ok); const submitBtns = document.querySelectorAll('[data-content="btn-add-cart"], [data-content="rev-btn-cart"]'); submitBtns.forEach(btn => { btn.disabled = false; btn.style.opacity = isReady ? '1' : '0.5'; btn.style.cursor = isReady ? 'pointer' : 'pointer'; btn.dataset.notReady = isReady ? 'false' : 'true'; }); return { isReady: isReady, incompleteAcc: incompleteAcc }; }
+    function buildAccessoryDisplayString(acc, accId) { let label = acc.Accessory_Name || ''; const sub = STATE.selections.accSubSelections[accId] || ''; const colorId = STATE.selections.accColorSelections[accId]; const color = colorId ? getColorForAccessory(acc, colorId) : null; const refinements = []; if (sub) refinements.push(sub); if (color && color.Color_Name) refinements.push(color.Color_Name); else if (accessoryHasColors(acc)) refinements.push('Choose a colour'); if (refinements.length > 0) label += ' (' + refinements.join(', ') + ')'; return label; }
+    function getFabricTypeDescription(fabricType) { const target = String(fabricType || '').trim(); if (target) { const key = CONTEXT.productType + '|' + target; const row = (STATE.data.fabricTypeByKey || {})[key]; if (row && (row.Fabric_Type_Description || '').toString().trim() !== '') { return row.Fabric_Type_Description.toString().trim(); } } if (target && OPENNESS_FALLBACKS[normalizeOpennessKey(fabricType)]) return OPENNESS_FALLBACKS[normalizeOpennessKey(fabricType)]; if (fabricType && FABRIC_TYPE_FALLBACKS[fabricType]) return FABRIC_TYPE_FALLBACKS[fabricType]; const currentType = STATE.selections.fabricType; if (currentType && OPENNESS_FALLBACKS[normalizeOpennessKey(currentType)]) return OPENNESS_FALLBACKS[normalizeOpennessKey(currentType)]; if (currentType && FABRIC_TYPE_FALLBACKS[currentType]) return FABRIC_TYPE_FALLBACKS[currentType]; return ''; }
+    function normalizeOpennessKey(value) { const raw = String(value || '').trim(); if (!raw) return ''; const cleaned = raw.replace(/\s+/g, '').replace(/percent/gi, '%'); if (OPENNESS_FALLBACKS[cleaned]) return cleaned; const numMatch = cleaned.match(/^(\d+(?:\.\d+)?)%?$/); if (numMatch) { const n = parseFloat(numMatch[1]); if (!isNaN(n)) { const key = (n % 1 === 0 ? n.toFixed(0) : n.toString()) + '%'; if (OPENNESS_FALLBACKS[key]) return key; } } return raw; }
+    function updatePricing() { try { const isFabricSelected = !!STATE.selections.collectionId; const prod = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId); if (!isFabricSelected || !prod) { el.priceDisplay().forEach(display => { display.innerText = ''; display.style.opacity = '0'; }); el.summaryDisplay().forEach(display => display.innerText = 'Select your fabric to start'); validateReady(); return; } let total = 0; const w = STATE.selections.actualWidth; const h = STATE.selections.actualHeight; const validity = evaluateDimensionValidity(); const matrices = STATE.data.pricing || {}; const priceGroup = (prod.Price_Group || '').trim(); const matrix = priceGroup ? matrices[priceGroup] : undefined; if (matrix) { const basePrice = lookupMatrixPrice(matrix, w, h); if (basePrice === PRICE_UNPRICEABLE) { STATE.sizeInvalidReason = validity.reason || 'Selected size is outside the available pricing range.'; showSizeWarning(STATE.sizeInvalidReason); el.priceDisplay().forEach(display => { display.innerText = ''; display.style.opacity = '0'; }); el.summaryDisplay().forEach(display => display.innerText = STATE.sizeInvalidReason); validateReady(); return; } total = basePrice; } else { console.warn('[Orion] No pricing matrix for product', prod.Collection_ID, 'Price_Group=', JSON.stringify(prod.Price_Group), 'Available matrix keys:', Object.keys(matrices)); } const lift = STATE.data.lifts.find(l => l.Lift_ID === STATE.selections.liftId); if (lift) total += parseFloat(lift.Base_Price || 0); let headrailSurcharge = 0; const standardHeadrailId = (prod.Standard_Headrail_Accessory_ID || '').trim(); if (standardHeadrailId) { const standardAcc = STATE.data.accessories.find(a => a.Accessory_ID === standardHeadrailId); const standardPrice = calculateAccessoryPrice(standardAcc, w); const selectedHeadrailId = STATE.selections.accessorySelections['Headrail']; if (selectedHeadrailId) { const selectedAcc = STATE.data.accessories.find(a => a.Accessory_ID === selectedHeadrailId); const selectedPrice = calculateAccessoryPrice(selectedAcc, w); headrailSurcharge = Math.max(0, selectedPrice - standardPrice); } } Object.entries(STATE.selections.accessorySelections).forEach(([cat, id]) => { if (!id) return; if (cat === 'Headrail') return; const acc = STATE.data.accessories.find(a => a.Accessory_ID === id); if (acc) total += calculateAccessoryPrice(acc, w); }); total += headrailSurcharge; if (STATE.selections.measurement === 'pro') total += 99; if (STATE.selections.installation === 'pro') total += 150; STATE.currentTotalPrice = total; const priceStr = '$' + Math.ceil(total).toLocaleString() + '.00'; el.priceDisplay().forEach(display => { display.innerText = ''; display.style.opacity = '0'; }); el.priceDisplay().forEach(display => { display.innerText = priceStr; display.style.opacity = '1'; }); STATE.sizeInvalidReason = ''; showSizeWarning(''); const dimText = formatDimension(STATE.selections.width, STATE.selections.widthEighths) + ' x ' + formatDimension(STATE.selections.height, STATE.selections.heightEighths); const summaryParts = [prod.Collection_Name, STATE.selections.colorName, STATE.selections.mount ? (STATE.selections.mount === 'inside' ? 'Inside Mount' : 'Outside Mount') : '', dimText, lift ? lift.Lift_Name : ''].filter(Boolean); Object.entries(STATE.selections.accessorySelections).forEach(([cat, id]) => { if (!id) return; const acc = STATE.data.accessories.find(a => a.Accessory_ID === id); if (acc) summaryParts.push(buildAccessoryDisplayString(acc, id)); }); let summaryText = summaryParts.join(' • '); const MAX_SUMMARY = isMobile() ? 80 : 140; if (summaryText.length > MAX_SUMMARY) summaryText = summaryText.slice(0, MAX_SUMMARY - 1).trimEnd() + '…'; el.summaryDisplay().forEach(display => display.innerText = summaryText); if (el.review.fabricVal()) el.review.fabricVal().innerText = STATE.selections.fabricType + ' • ' + prod.Collection_Name + ' (' + STATE.selections.colorName + ')'; if (el.review.mountVal()) el.review.mountVal().innerText = (STATE.selections.mount ? (STATE.selections.mount === 'inside' ? 'Inside' : 'Outside') : 'Not selected') + ' • ' + dimText; const activeAccs = Object.entries(STATE.selections.accessorySelections).filter(([cat, id]) => id).map(([cat, id]) => { const a = STATE.data.accessories.find(acc => acc.Accessory_ID === id); if (!a) return ''; const sub = STATE.selections.accSubSelections[id] || ''; const colorId = STATE.selections.accColorSelections[id]; const color = colorId ? getColorForAccessory(a, colorId) : null; const parts = [a.Accessory_Name]; const refinements = []; if (sub) refinements.push(sub); if (color?.Color_Name) refinements.push(color.Color_Name); else if (accessoryHasColors(a)) refinements.push('Choose a colour'); if (refinements.length) parts.push('(' + refinements.join(', ') + ')'); return parts.join(' '); }).filter(Boolean); if (el.review.controlsVal()) el.review.controlsVal().innerText = (lift?.Lift_Name || 'Standard') + (activeAccs.length ? ' • ' + activeAccs.join(', ') : ''); if (el.review.serviceVal()) el.review.serviceVal().innerText = (STATE.selections.measurement ? (STATE.selections.measurement === 'pro' ? 'Pro Measure' : 'Self Measure') : 'No Measure selected') + ', ' + (STATE.selections.installation ? (STATE.selections.installation === 'pro' ? 'Pro Install' : 'Self Install') : 'No Install selected'); validateReady(); } catch (e) { console.warn('Pricing sync failed', e); } }
+    function renderUI() { if (el.fabricType()) { const types = CONTEXT.fabricTypeRows.map(ft => (ft.Fabric_Type || '').trim()).filter(Boolean); el.fabricType().innerHTML = types.map(type => { const desc = getFabricTypeDescription(type); return '<label class="cursor-pointer group"><input type="radio" name="fabric" value="' + type + '" class="sr-only" ' + (STATE.selections.fabricType === type ? 'checked' : '') + '><div class="option-card-apple"><div class="flex flex-col pr-6"><span class="apple-card-title font-semibold">' + type + '</span>' + (desc ? '<span class="apple-meta text-apple-text-muted mt-1.5 leading-relaxed font-normal">' + desc + '</span>' : '') + '</div><div class="check-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round"></path></svg></div></div></div></label>'; }).join(''); } if (el.collections()) { const actualW = STATE.selections.actualWidth; const actualH = STATE.selections.actualHeight; const filtered = STATE.data.products.filter(p => { return p.Vendor === CONTEXT.vendor && p.Product_Type === CONTEXT.productType && p.Fabric_Type === STATE.selections.fabricType && checkConstraint(p, actualW, actualH); }); const displayed = STATE.showAllCollections ? filtered : filtered.slice(0, CONFIG.maxInitialCollections); const escAttr = (s) => String(s || '').replace(/"/g, '&quot;'); let html = displayed.map(p => { const colors = STATE.data.colors[p.Collection_ID] || []; const isActiveCollection = STATE.selections.collectionId === p.Collection_ID; const isFulfilled = isActiveCollection && !!STATE.selections.colorName; const repIdx = isFulfilled ? Math.max(0, colors.findIndex(c => c.Color_Name === STATE.selections.colorName)) : 0; const repColor = colors[repIdx] || colors[0] || null; const repImg = repColor ? repColor.Image_URL : ''; const selectedClass = isActiveCollection ? ' is-selected' : ''; const desc = (p.Collection_Description || '').toString().trim(); const subpromptVisible = isActiveCollection; const subpromptClass = subpromptVisible ? ' is-visible' : ' is-hidden'; const fulfilledClass = isFulfilled ? ' is-fulfilled' : ''; const labelClass = isFulfilled ? 'card-color-subprompt-label is-fulfilled' : 'card-color-subprompt-label'; const labelText = isFulfilled ? ('Colour: ' + STATE.selections.colorName) : 'Colors'; const gridHtml = colors.map(c => { const isThisColor = isFulfilled && STATE.selections.colorName === c.Color_Name; return '<div class="card-color-item" data-card-color-cid="' + escAttr(p.Collection_ID) + '" data-card-color-name="' + escAttr(c.Color_Name) + '" role="button" tabindex="0" aria-label="Select ' + escAttr(c.Color_Name) + '"><div class="card-color-swatch ' + (isThisColor ? 'is-active' : '') + '"><div class="card-color-swatch-inner" style="background-image: url(\'' + escAttr(c.Image_URL) + '\');"></div></div><div class="card-color-name">' + escAttr(c.Color_Name) + '</div></div>'; }).join(''); return '<div class="mb-6 last:mb-0" data-collection-row="' + escAttr(p.Collection_ID) + '"><div class="fabric-collection-card' + selectedClass + '" data-collection-card="' + escAttr(p.Collection_ID) + '" onclick="window.__orionSelectCollectionCard(\'' + escAttr(p.Collection_ID) + '\')"><button type="button" class="fabric-collection-info" onclick="event.stopPropagation(); window.openFabricModal(\'' + escAttr(p.Collection_ID) + '\')" aria-label="View ' + escAttr(p.Collection_Name) + ' details"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></button><div class="fabric-swatch-rail-wrap" onclick="event.stopPropagation();"><div class="fabric-swatch-rail" data-rail data-rail-cid="' + escAttr(p.Collection_ID) + '" onclick="window.__orionSelectCollectionCard(\'' + escAttr(p.Collection_ID) + '\')" role="button" tabindex="0" aria-label="Select ' + escAttr(p.Collection_Name) + '"><div class="fabric-rail-strip" style="' + (repImg ? ('background-image: url(\'' + escAttr(repImg) + '\');') : '') + '"></div></div></div><div class="fabric-collection-name">' + escAttr(p.Collection_Name) + '</div>' + (desc ? '<div class="fabric-collection-description">' + escAttr(desc) + '</div>' : '') + '</div><div class="card-color-subprompt' + subpromptClass + fulfilledClass + '" data-card-subprompt="' + escAttr(p.Collection_ID) + '" aria-hidden="' + (subpromptVisible ? 'false' : 'true') + '"><div class="' + labelClass + '">' + escAttr(labelText) + '</div><div class="card-color-grid">' + gridHtml + '</div></div></div>'; }).join(''); if (filtered.length > CONFIG.maxInitialCollections && !STATE.showAllCollections) { html += '<button type="button" class="btn-show-all apple-meta font-semibold text-apple-blue mt-2" onclick="window.toggleAllCollections()">View all ' + filtered.length + ' collections</button>'; } el.collections().innerHTML = html; el.collections().querySelectorAll('.card-color-item').forEach(item => { const onPick = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } const targetCid = item.dataset.cardColorCid; const targetColor = item.dataset.cardColorName; if (!targetCid || !targetColor) return; if (typeof window.__selectColorFromGrid === 'function') { window.__selectColorFromGrid(targetCid, targetColor); } else if (typeof selectColorFromGrid === 'function') { selectColorFromGrid(targetCid, targetColor); } }; item.addEventListener('click', onPick); item.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(e); } }); }); el.collections().querySelectorAll('.fabric-swatch-rail[data-rail]').forEach(rail => { rail.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const cid = rail.dataset.railCid; if (cid && typeof window.__orionSelectCollectionCard === 'function') { window.__orionSelectCollectionCard(cid); } } }); }); }
+    }
+    function setupReviewToggle() { const toggleBtn = el.review.toggleBtn(); const section = el.review.section(); const backdrop = el.review.backdrop(); const content = el.review.content(); const closeBtn = el.review.closeBtn(); if (!toggleBtn || !section || !content || !backdrop) return; const close = () => { section.classList.add('invisible', 'pointer-events-none'); backdrop.classList.remove('opacity-100'); content.classList.add('translate-y-full'); document.body.style.overflow = ''; const arrow = toggleBtn.querySelector('svg'); if (arrow) arrow.style.transform = ''; }; toggleBtn.onclick = () => { section.classList.remove('invisible', 'pointer-events-none'); setTimeout(() => { backdrop.classList.add('opacity-100'); content.classList.remove('translate-y-full'); }, 10); document.body.style.overflow = 'hidden'; const arrow = toggleBtn.querySelector('svg'); if (arrow) arrow.style.transform = ''; }; backdrop.onclick = close; if (closeBtn) closeBtn.onclick = close; }
+    function getStandardHeadrailDisplayString(prod) {
+        if (!prod) return '';
+        const standardHeadrailId = (prod.Standard_Headrail_Accessory_ID || '').toString().trim();
+        if (!standardHeadrailId) return '';
+        const acc = STATE.data.accessories.find(a => a.Accessory_ID === standardHeadrailId);
+        if (!acc) {
+            console.warn('[Orion] Standard headrail accessory "' + standardHeadrailId + '" not found in accessories CSV. _Orion_Headrail will be empty.');
+            return '';
+        }
+        const sub = STATE.selections.accSubSelections[standardHeadrailId] || getDefaultSubOption(acc);
+        const colorId = STATE.selections.accColorSelections[standardHeadrailId];
+        const color = colorId ? getColorForAccessory(acc, colorId) : null;
+        const refinements = [];
+        if (sub) refinements.push(sub);
+        if (color && color.Color_Name) refinements.push(color.Color_Name);
+        let label = acc.Accessory_Name || '';
+        if (refinements.length > 0) label += ' (' + refinements.join(', ') + ')';
+        return label;
+    }
+
+    function buildOrionAccessoryProperties(prod) {
+        const props = {};
+        const displayFor = (accId) => {
+            const acc = STATE.data.accessories.find(a => a.Accessory_ID === accId);
+            if (!acc) return '';
+            return buildAccessoryDisplayString(acc, accId);
+        };
+        const selectedHeadrailId = STATE.selections.accessorySelections['Headrail'];
+        if (selectedHeadrailId) {
+            props['_Orion_Headrail'] = displayFor(selectedHeadrailId);
+        } else {
+            props['_Orion_Headrail'] = getStandardHeadrailDisplayString(prod);
+        }
+        const categoryBuckets = [
+            { cat: 'Remote', key: '_Orion_Remote' },
+            { cat: 'Charger', key: '_Orion_Charger' },
+            { cat: 'Smart Automation', key: '_Orion_Smart_Automation' }
+        ];
+        categoryBuckets.forEach(bucket => {
+            const selectedId = STATE.selections.accessorySelections[bucket.cat];
+            if (!selectedId) return;
+            const acc = STATE.data.accessories.find(a => a.Accessory_ID === selectedId);
+            if (!acc) return;
+            const actualCategory = (acc.Accessory_Category || '').toString().trim();
+            if (actualCategory !== bucket.cat) {
+                console.warn('[Orion] Accessory ' + selectedId + ' (' + (acc.Accessory_Name || '') + ') is in category "' + actualCategory + '" but was selected under "' + bucket.cat + '". Leaving ' + bucket.key + ' blank; accessory stays in Hardware.');
+                return;
+            }
+            props[bucket.key] = displayFor(selectedId);
+        });
+        return props;
+    }
+
+    function setupCheckout() {
+        const form = el.form();
+        const reviewBtn = el.review.addToBagBtn();
+        const mobileBtn = document.getElementById('add-to-bag-mobile');
+        const desktopBtn = document.getElementById('add-to-bag-desktop');
+
+        const resolveShopifyVariant = () => {
+            const id = String((CONTEXT.uiRow && CONTEXT.uiRow.Shopify_Variant_ID) || '').trim();
+            if (!/^\d+$/.test(id) || id === '0') return '';
+            return id;
+        };
+
+        const handleCheckout = async (e) => {
+            if(e) e.preventDefault();
+            const ready = validateReady();
+            if(!ready.isReady) {
+                const missing = getMissingSelections();
+                if (missing.length > 0) {
+                    const firstMissing = missing[0];
+                    const more = missing.length > 1 ? (' (+' + (missing.length - 1) + ' more)') : '';
+                    showToast('Please select ' + firstMissing + more + '.');
+                } else if (ready.incompleteAcc) showToast('Please choose a colour for ' + ready.incompleteAcc.Accessory_Name + '.');
+                else showToast('Please complete your selections to continue.');
+                return;
+            }
+            const variantId = resolveShopifyVariant();
+            if (!variantId) {
+                console.error('[Orion] Missing or invalid Shopify_Variant_ID for', CONTEXT.productType, '— checkout blocked.', { uiRow: CONTEXT.uiRow });
+                showToast('Sorry, this product is not available for online purchase yet.');
+                return;
+            }
+            const submitBtns = document.querySelectorAll('[data-content="btn-add-cart"], [data-content="rev-btn-cart"]');
+            submitBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.dataset.originalText = btn.innerHTML;
+                btn.innerHTML = 'Adding to Bag...';
+            });
+            try {
+                const prod = STATE.data.products.find(p => p.Collection_ID === STATE.selections.collectionId);
+                const lift = STATE.data.lifts.find(l => l.Lift_ID === STATE.selections.liftId);
+                const selectedHeadrailId = (STATE.selections.accessorySelections['Headrail'] || '').toString().trim() || (prod && (prod.Standard_Headrail_Accessory_ID || '').toString().trim()) || '';
+                let headrailColor = '';
+                if (selectedHeadrailId) {
+                    const headrailAcc = STATE.data.accessories.find(a => a.Accessory_ID === selectedHeadrailId);
+                    const colorId = STATE.selections.accColorSelections[selectedHeadrailId];
+                    if (colorId && headrailAcc) {
+                        const color = getColorForAccessory(headrailAcc, colorId);
+                        if (color && color.Color_Name) headrailColor = color.Color_Name;
+                    }
+                }
+                const activeAccs = Object.entries(STATE.selections.accessorySelections).filter(([cat, id]) => id).map(([cat, id]) => { const a = STATE.data.accessories.find(acc => acc.Accessory_ID === id); if (!a) return ''; const sub = STATE.selections.accSubSelections[id] || ''; const colorId = STATE.selections.accColorSelections[id]; const color = colorId ? getColorForAccessory(a, colorId) : null; const refinements = []; if (sub) refinements.push(sub); if (color?.Color_Name) refinements.push(color.Color_Name); return a.Accessory_Name + (refinements.length ? ' (' + refinements.join(', ') + ')' : ''); }).filter(Boolean);
+                const dimStr = formatDimension(STATE.selections.width, STATE.selections.widthEighths) + ' x ' + formatDimension(STATE.selections.height, STATE.selections.heightEighths);
+
+                const summaryData = {
+                    Product: prod.Collection_Name,
+                    Fabric_Type: STATE.selections.fabricType,
+                    Color: STATE.selections.colorName,
+                    Mount: STATE.selections.mount === 'inside' ? 'Inside' : 'Outside',
+                    Width: STATE.selections.actualWidth + ' in',
+                    Height: STATE.selections.actualHeight + ' in',
+                    LiftSystem: lift?.Lift_Name,
+                    Hardware: activeAccs.join(', ') || 'Standard',
+                    Services: (STATE.selections.measurement === 'pro' ? 'Pro Measure' : 'Self Measure') + ', ' + (STATE.selections.installation === 'pro' ? 'Pro Install' : 'Self Install'),
+                    Total_Price: STATE.currentTotalPrice.toString()
+                };
+                try {
+                    fetch('https://agentsapi.swipepages.com/leads', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fields: summaryData,
+                            metadata: { pageUrl: window.location.href, submittedAt: new Date().toISOString() }
+                        }),
+                        keepalive: true
+                    })
+                    .then(leadResponse => {
+                        if (!leadResponse.ok) {
+                            console.warn('[Orion] Lead capture returned non-2xx (non-blocking): HTTP ' + leadResponse.status + '. Continuing to Shopify.');
+                        }
+                    })
+                    .catch(leadErr => {
+                        console.warn('[Orion] Lead capture network error (non-blocking):', leadErr);
+                    });
+                } catch (leadSetupErr) {
+                    console.warn('[Orion] Lead capture setup threw (non-blocking):', leadSetupErr);
+                }
+
+                const qty = Math.max(1, Math.ceil(STATE.currentTotalPrice));
+                const shopDomain = SHOPIFY_CONFIG.shopName ? (SHOPIFY_CONFIG.shopName + '.myshopify.com') : SHOPIFY_CONFIG.domain;
+                const orionAccessoryProps = buildOrionAccessoryProperties(prod);
+                const props = {
+                    'Fabric': summaryData.Fabric_Type + ' - ' + summaryData.Product + ' (' + summaryData.Color + ')',
+                    'Mount': summaryData.Mount,
+                    'Width': STATE.selections.actualWidth + ' in',
+                    'Height': STATE.selections.actualHeight + ' in',
+                    'LiftSystem': summaryData.LiftSystem,
+                    'Hardware': summaryData.Hardware,
+                    'Services': summaryData.Services,
+                    'Product_Type': CONTEXT.productType,
+                    'Collection_ID': prod.Collection_ID,
+                    'Lift_ID': STATE.selections.liftId,
+                    'Headrail_ID': selectedHeadrailId,
+                    'Headrail_Color': headrailColor,
+                    'Shopify_Variant_ID': variantId,
+                    '_Orion_Headrail': orionAccessoryProps._Orion_Headrail || '',
+                    '_Orion_Remote': orionAccessoryProps._Orion_Remote || '',
+                    '_Orion_Charger': orionAccessoryProps._Orion_Charger || '',
+                    '_Orion_Smart_Automation': orionAccessoryProps._Orion_Smart_Automation || ''
+                };
+                let params = ['id=' + variantId, 'quantity=' + qty];
+                Object.entries(props).forEach(([k, v]) => { if (v) params.push('properties[' + k + ']=' + encodeURIComponent(v)); });
+                const checkoutUrl = 'https://' + shopDomain + '/cart/add?' + params.join('&');
+                const toast = el.toast();
+                if (toast) {
+                    const msg = el.toastMsg();
+                    if (msg) msg.innerText = 'Redirecting to checkout...';
+                    toast.classList.add('is-visible');
+                }
+                setTimeout(() => { window.location.href = checkoutUrl; }, 1200);
+            } catch (err) {
+                console.error(err);
+                const msg = el.toastMsg();
+                if (msg) msg.innerText = 'Something went wrong. Please try again.';
+                el.toast()?.classList.add('is-visible');
+                submitBtns.forEach(btn => { btn.disabled = false; btn.innerHTML = btn.dataset.originalText; });
+            }
+        };
+
+        if (form) form.onsubmit = handleCheckout;
+        if (reviewBtn) reviewBtn.onclick = handleCheckout;
+        if (mobileBtn) mobileBtn.onclick = handleCheckout;
+        if (desktopBtn) desktopBtn.onclick = handleCheckout;
+    }
+
+    window.toggleAllCollections = () => { STATE.showAllCollections = true; renderUI(); };
+    window.openFabricModal = function(cid) { const prod = STATE.data.products.find(p => p.Collection_ID === cid); const colors = STATE.data.colors[cid] || []; const overlay = document.getElementById('fabric-modal-overlay'); const body = document.getElementById('fabric-modal-body'); const title = document.getElementById('modal-fabric-title'); if (!overlay || !body || !title || !prod) return; title.innerText = prod.Collection_Name; body.innerHTML = '<div class="max-w-3xl mx-auto text-center mb-12"><p class="apple-card-title text-[20px] text-apple-text leading-relaxed font-normal font-semibold">' + (prod.Collection_Description || 'Technical elegance for your windows.') + '</p></div><div class="grid grid-cols-1 gap-12">' + colors.map(c => '<div class="group"><div class="aspect-[16/10] w-full w-full rounded-[2rem] overflow-hidden bg-[#f5f5f7] mb-6 border border-apple-border/50"><img src="' + c.Image_URL + '" class="w-full h-full object-cover"></div><div class="px-2"><h4 class="apple-card-title mb-1">' + c.Color_Name + '</h4><p class="apple-meta text-apple-text-muted">Code: ' + c.Color_Code + '</p></div></div>').join('') + '</div>'; overlay.classList.replace('hidden', 'flex'); setTimeout(() => { document.getElementById('fabric-modal-backdrop')?.classList.add('opacity-100'); document.getElementById('fabric-modal-content')?.classList.remove('opacity-0', 'translate-y-8', 'scale-95'); }, 10); document.body.style.overflow = 'hidden'; };
+    window.closeFabricModal = function() { const overlay = document.getElementById('fabric-modal-overlay'); if (overlay) { document.getElementById('fabric-modal-backdrop')?.classList.remove('opacity-100'); document.getElementById('fabric-modal-content')?.classList.add('opacity-0', 'translate-y-8', 'scale-95'); setTimeout(() => { overlay.classList.replace('flex', 'hidden'); document.body.style.overflow = ''; }, 500); } };
+
+    async function init() {
+        try {
+            updateLoader('Loading product catalog...');
+            const keys = Object.keys(CSV_URLS);
+            const results = await Promise.allSettled(keys.map(k => fetch(csvUrl(CSV_URLS[k]), { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' on ' + k + ' (GitHub CSV fetch failed)'); return r.text(); })));
+            const errors = [];
+            const data = {};
+            keys.forEach((k, i) => { const r = results[i]; if (r.status === 'fulfilled') { data[k] = (k === 'pricing') ? parsePricingCSV(r.value) : parseCSV(r.value); } else { errors.push(r.reason.message); data[k] = (k === 'pricing') ? {} : []; } });
+            if (errors.length > 0) { const errEl = el.error(); const formEl = el.form(); const loaderEl = el.loader(); if (loaderEl) loaderEl.style.display = 'none'; if (formEl) formEl.classList.add('hidden'); if (errEl) { errEl.classList.remove('hidden'); errEl.classList.add('flex'); const p = errEl.querySelector('p'); if (p) p.innerText = errors.join(' • '); } return; }
+            const sanityFailures = runSanityGates(data);
+            if (sanityFailures.length > 0) { const errEl = el.error(); const formEl = el.form(); const loaderEl = el.loader(); if (loaderEl) loaderEl.style.display = 'none'; if (formEl) formEl.classList.add('hidden'); if (errEl) { errEl.classList.remove('hidden'); errEl.classList.add('flex'); const p = errEl.querySelector('p'); if (p) p.innerText = 'Required data is missing or empty: ' + sanityFailures.join(' • '); } return; }
+            STATE.data.productUi = data.productUi || [];
+            STATE.data.fabricTypes = data.fabricTypes || [];
+            STATE.data.productLifts = data.productLifts || [];
+            STATE.data.productAccessories = data.productAccessories || [];
+            STATE.data.productAccColors = data.productAccColors || [];
+            STATE.data.lifts = data.lifts || [];
+            STATE.data.accessories = data.accessories || [];
+            STATE.data.accColors = data.accColors || [];
+            STATE.data.colors = {};
+            (data.colors || []).forEach(c => { const cid = c.Collection_ID; if (!cid) return; if (!STATE.data.colors[cid]) STATE.data.colors[cid] = []; STATE.data.colors[cid].push(c); });
+            STATE.data.pricing = data.pricing || {};
+            const ctxErr = resolveContext();
+            if (ctxErr) { showContextError(ctxErr); return; }
+            STATE.data.products = (data.products || []).filter(p => { return (p.Product_Type || '').trim() === CONTEXT.productType && (p.Vendor || '').trim() === CONTEXT.vendor; });
+            const contextFailures = runContextSanityChecks();
+            if (contextFailures.length > 0) { showContextError({ code: 'CONTEXT_VALIDATION', failures: contextFailures }); return; }
+            STATE.data.products.forEach(p => { const ui = CONTEXT.uiRow; if (ui) { p.Lift_Family_Image_URL = (ui.Lift_Family_Image_URL || '').toString().trim(); p.Accessory_Family_Image_URL = (ui.Accessory_Family_Image_URL || '').toString().trim(); p.Mount_Comparison_Image_URL = (ui.Mount_Comparison_Image_URL || '').toString().trim(); p.Mount_Inside_Image_URL = (ui.Mount_Inside_Image_URL || '').toString().trim(); p.Mount_Outside_Image_URL = (ui.Mount_Outside_Image_URL || '').toString().trim(); } else { p.Lift_Family_Image_URL = ''; p.Accessory_Family_Image_URL = ''; p.Mount_Comparison_Image_URL = ''; p.Mount_Comparison_Image_URL = ''; p.Mount_Outside_Image_URL = ''; } });
+            STATE.data.lifts.forEach(l => { l.ProductLiftImages = {}; });
+            STATE.data.productLifts.forEach(row => { if (row.Product_Type && row.Lift_ID) { const url = (row.Image_URL || '').toString().trim(); const lift = STATE.data.lifts.find(l => l.Lift_ID === row.Lift_ID); if (lift) lift.ProductLiftImages[row.Product_Type] = url; } });
+            STATE.data.accessories.forEach(a => { a.ProductAccessoryImages = {}; });
+            STATE.data.productAccessories.forEach(row => { if (row.Product_Type && row.Accessory_ID) { const url = (row.Image_URL || '').toString().trim(); const acc = STATE.data.accessories.find(a => a.Accessory_ID === row.Accessory_ID); if (acc) acc.ProductAccessoryImages[row.Product_Type] = url; } });
+            STATE.data.productAccColorImages = {};
+            STATE.data.productAccColors.forEach(row => { if (row.Product_Type && row.Accessory_ID && row.Color_ID) { const key = row.Product_Type + '|' + row.Accessory_ID + '|' + row.Color_ID; STATE.data.productAccColorImages[key] = (row.Image_URL || '').toString().trim(); } });
+            STATE.data.fabricTypeByKey = {};
+            STATE.data.fabricTypes.forEach(ft => { if (ft.Product_Type && ft.Fabric_Type) { const key = ft.Product_Type + '|' + ft.Fabric_Type; STATE.data.fabricTypeByKey[key] = ft; } });
+            if (!runPricingAssertions()) return;
+            STATE.selections.fabricType = CONTEXT.fabricType;
+            applyContextText();
+            console.log('[Orion] CONTEXT:', { productSlug: CONTEXT.productSlug, productType: CONTEXT.productType, vendor: CONTEXT.vendor, fabricSlug: CONTEXT.fabricSlug, fabricType: CONTEXT.fabricType, fabricTypeRowCount: CONTEXT.fabricTypeRows.length });
+            updateLoader('Building your shade...');
+            rebindLifestyleHeroes();
+            setSolarHero(STATE.selections.fabricType);
+            populateSizeDropdowns();
+            determineVisibleCategories();
+            renderUI();
+            renderMotorizedAccessories();
+            renderAestheticCategories();
+            rebuildLiftLayer();
+            updatePricing();
+            applySectionGates();
+            setupSwatchAutoHide();
+            setupSwatchRailOverflow();
+            setupPaletteStrip();
+            setupSwatchDetailClose();
+            setupSectionProgress();
+            setupReviewToggle();
+            setupCheckout();
+            setupViewportStateMachine();
+            syncMountModalImages();
+            try { const origOpen = window.openMountModal; window.openMountModal = function() { if (typeof origOpen === 'function') { try { origOpen(); } catch (e) { console.warn('openMountModal failed', e); } } syncMountModalImages(); }; } catch (e) { console.warn('openMountModal wrap failed', e); }
+            const loaderEl = el.loader();
+            const formEl = el.form();
+            if (loaderEl) loaderEl.style.display = 'none';
+            if (formEl) formEl.classList.remove('hidden');
+        } catch (e) {
+            console.error('init failed', e);
+            const loaderEl = el.loader();
+            const formEl = el.form();
+            const errEl = el.error();
+            if (loaderEl) loaderEl.style.display = 'none';
+            if (formEl) formEl.classList.add('hidden');
+            if (errEl) { errEl.classList.remove('hidden'); errEl.classList.add('flex'); const p = errEl.querySelector('p'); if (p) p.innerText = 'Unexpected error: ' + (e.message || 'see console'); }
+        }
+    }
+
+    const setupListeners = () => {
+        const configForm = el.form();
+        if (!configForm) return;
+        const handleSizeChange = () => {
+            STATE.hasUserInteracted = true;
+            const widthEl = document.getElementById('width-whole');
+            const heightEl = document.getElementById('height-whole');
+            const widthFracEl = configForm.querySelector('select[name="width_fraction"]');
+            const heightFracEl = configForm.querySelector('select[name="height_fraction"]');
+            let wholeW = STATE.selections.width;
+            let wholeH = STATE.selections.height;
+            if (widthEl) { const parsedW = parseInt(widthEl.value, 10); if (!isNaN(parsedW) && parsedW > 0) wholeW = parsedW; }
+            if (heightEl) { const parsedH = parseInt(heightEl.value, 10); if (!isNaN(parsedH) && parsedH > 0) wholeH = parsedH; }
+            const wEighths = parseFractionValue(widthFracEl ? widthFracEl.value : '0');
+            const hEighths = parseFractionValue(heightFracEl ? heightFracEl.value : '0');
+            STATE.selections.width = wholeW;
+            STATE.selections.height = wholeH;
+            STATE.selections.widthEighths = wEighths;
+            STATE.selections.heightEighths = hEighths;
+            STATE.selections.actualWidth = wholeW + (wEighths / EIGHTHS);
+            STATE.selections.actualHeight = wholeH + (hEighths / EIGHTHS);
+            determineVisibleCategories();
+            revalidateSelections();
+            renderUI();
+            renderMotorizedAccessories();
+            renderAestheticCategories();
+            rebuildLiftLayer();
+            updatePricing();
+            applySectionGates();
+            setupPaletteStrip();
+        };
+        configForm.addEventListener('change', (e) => {
+            const t = e.target;
+            if (t && (t.id === 'width-whole' || t.id === 'height-whole')) handleSizeChange();
+            if (t && t.name === 'width_fraction') handleSizeChange();
+            if (t && t.name === 'height_fraction') handleSizeChange();
+        });
+        configForm.onchange = (e) => {
+            const n = e.target.name;
+            if (n === 'fabric') {
+                STATE.hasUserInteracted = false;
+                const newFabricType = e.target.value;
+                STATE.selections.fabricType = newFabricType;
+                const fabricTypeRow = CONTEXT.fabricTypeRows.find(ft => (ft.Fabric_Type || '').trim() === newFabricType);
+                if (fabricTypeRow) { CONTEXT.fabricType = newFabricType; CONTEXT.fabricSlug = (fabricTypeRow.Fabric_Type_Slug || '').trim(); }
+                STATE.showAllCollections = false;
+                STATE.selections.collectionId = '';
+                STATE.selections.colorName = '';
+                hideSwatchDetail();
+                hideCollectionImage();
+                setSolarHero(STATE.selections.fabricType);
+                populateSizeDropdowns();
+                revalidateSelections();
+                determineVisibleCategories();
+                renderUI();
+                renderMotorizedAccessories();
+                renderAestheticCategories();
+                rebuildLiftLayer();
+                updatePricing();
+                applySectionGates();
+                setupPaletteStrip();
+            } else if (n === 'color') {
+                STATE.hasUserInteracted = true;
+                const val = e.target.value || '';
+                const [cid, color] = val.split('|');
+                if (cid) {
+                    if (STAGED_SELECTION_ENABLED) { selectCollectionOnly(cid); return; }
+                    STATE.selections.collectionId = cid;
+                    STATE.selections.colorName = color;
+                    const colors = STATE.data.colors[cid] || [];
+                    const cObj = colors.find(c => c.Color_Name === color);
+                    if (cObj && cObj.Image_URL) showSwatchDetail(cObj.Image_URL);
+                    populateSizeDropdowns();
+                    revalidateSelections();
+                    determineVisibleCategories();
+                    renderUI();
+                    renderMotorizedAccessories();
+                    renderAestheticCategories();
+                    rebuildLiftLayer();
+                    updatePricing();
+                    applySectionGates();
+                    setupPaletteStrip();
+                }
+            } else if (n === 'mount') {
+                STATE.hasUserInteracted = true;
+                STATE.selections.mount = e.target.value;
+                setMountView(STATE.selections.mount);
+                updatePricing();
+                applySectionGates();
+            } else if (n === 'lift') {
+                STATE.hasUserInteracted = true;
+                STATE.selections.liftId = e.target.value;
+                setLiftView(STATE.selections.liftId);
+                determineVisibleCategories();
+                (STATE.motorizedCategories || []).forEach(cat => { STATE.selections.accessorySelections[cat] = null; });
+                revalidateSelections();
+                renderUI();
+                renderMotorizedAccessories();
+                renderAestheticCategories();
+                updatePricing();
+                applySectionGates();
+            } else if (n === 'measurement' || n === 'installation') {
+                STATE.hasUserInteracted = true;
+                STATE.selections[n] = e.target.value;
+                updatePricing();
+                applySectionGates();
+            }
+        };
+        configForm.oninput = (e) => {
+            if (e.target.id === 'width-whole' || e.target.id === 'height-whole') handleSizeChange();
+            else if (e.target.name && e.target.name.startsWith('width_fraction')) { STATE.hasUserInteracted = true; updatePricing(); applySectionGates(); }
+            else if (e.target.name && e.target.name.startsWith('height_fraction')) { STATE.hasUserInteracted = true; updatePricing(); applySectionGates(); }
+        };
+    };
+
+    window.__orionInit = init;
+    window.__selectCollectionOnly = selectCollectionOnly;
+    window.__selectColorFromGrid = selectColorFromGrid;
+    window.__showCollectionImage = showCollectionImage;
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => { init(); setupListeners(); });
+    } else {
+        init();
+        setupListeners();
+    }
+})();</script>
