@@ -1,5 +1,6 @@
 Vendor,Lift_ID,Lift_Category,Lift_Name,Lift_Description,Price_Type,Base_Price,Min_Width,Max_Width,Max_Height
 Vendor_SBM,manual-chain,Manual,Chain Control,Smooth operation with child-safe tensioner.,Fixed,0,12,120,
 Vendor_SBM,manual-cordless,Manual,Eclipse Cordless,"A cordless look with simple, effortless operation.",Fixed,29.99,24,86,
-Vendor_SBM,solo-motor,Motorized,Solo Motor,"Quiet motorized control for a cleaner, more convenient shade.",Fixed,229.99,30,96,
-Vendor_SBM,wand-motor,Motorized,Wand Motor,Rechargeable battery. Control at the window.,Fixed,169.99,26,108,
+Vendor_SBM,solo-motor,Motorized,Solo Motor,"Quiet motorized control for a cleaner, more convenient shade.",Fixed,169.99,30,96,
+Vendor_SBM,solo-bluetooth,Motorized,Solo Bluetooth,Quiet motorized control with bluetooth connectivity,Fixed,199.99,,,
+Vendor_SBM,wand-motor,Motorized,Wand Motor,Rechargeable battery. Control at the window.,Fixed,139.99,26,108,
