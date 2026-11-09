@@ -1,20 +1,20 @@
 Collection_ID,Vendor,Product_Type,Collection_Name,Fabric_Type,Price_Group,Max_Width,Max_Height,Collection_Description,Collection_Image,Standard_Headrail_Accessory_ID
-roller-jamboree,Vendor_SBM,Roller Shade,Jamboree Ice,Light Filtering,PG3,96,120,"A refined, subtle texture that diffuses light beautifully. Its soft matte finish brings a calm, organic feel to any room.",,open-roll
-roller-bocalf,Vendor_SBM,Roller Shade,Boca,Light Filtering,PG1,108,144,"A clean, understated fabric with a soft woven texture. Designed to filter daylight gently while keeping the room bright and comfortable.",,open-roll
-roller-chic,Vendor_SBM,Roller Shade,Chic,Light Filtering,PG2,96,120,"A smooth, modern fabric with a polished look. Simple, elegant, and easy to pair with contemporary interiors.",,open-roll
-roller-bocabo,Vendor_SBM,Roller Shade,Boca,Blackout,PG2,96,120,"A minimal blackout fabric with a clean surface and soft texture. Ideal for bedrooms, media rooms, and spaces that need added privacy.",,open-roll
-roller-obskur,Vendor_SBM,Roller Shade,Obskur,Blackout,PG3,96,120,"A rich, modern fabric with a more substantial feel. Its quiet texture adds depth while keeping the overall look clean and architectural.",,open-roll
-roller-polyflex,Vendor_SBM,Roller Shade,Polyflex,Blackout,PG3,96,120,A simple and economical vinyl classic collection,,open-roll
-roller-royal,Vendor_SBM,Roller Shade,Royal,Light Filtering,PG3,96,120,"A refined fabric with a soft, elegant texture. Its balanced finish brings warmth and simplicity to everyday spaces.",,open-roll
-roller-shanellf,Vendor_SBM,Roller Shade,Shanel,Light Filtering,PG1,96,120,"A softly textured fabric that filters light with a refined, natural look. Elegant enough for formal rooms, simple enough for everyday living.",,open-roll
-roller-misticbo,Vendor_SBM,Roller Shade,Mistic Blackout,Blackout,misticbo,96,120,"A smooth blackout fabric with a clean, premium finish. Made for privacy, room darkening, and a more restful atmosphere.",,open-roll
-roller-shanelbo,Vendor_SBM,Roller Shade,Shanel,Blackout,PG2,96,120,A refined blackout fabric with a soft woven character. It brings privacy and light control without losing its decorative feel.,,open-roll
-solars-mistic1,Vendor_SBM,Solar Shade,Mistic 1,1%,PG3,96,120,A tightly woven solar fabric designed for stronger glare control. Ideal for bright spaces where visibility and comfort both matter.,https://cdn.shopify.com/s/files/1/0799/1456/5913/files/mistic-family.png?v=1786759512,open-roll
-solars-baris,Vendor_SBM,Solar Shade,Baris,3%,PG2,96,120,"A versatile solar fabric with a clean, balanced weave. It softens glare while keeping the window light, simple, and modern.",,open-roll
-solars-mistic3,Vendor_SBM,Solar Shade,Mistic 3,3%,PG3,96,120,"A balanced solar fabric that reduces glare while keeping a natural view outside. Clean, practical, and easy to live with.",https://cdn.shopify.com/s/files/1/0799/1456/5913/files/mistic-family.png?v=1786759512,open-roll
-solars-mistic5,Vendor_SBM,Solar Shade,Mistic 5,5%,PG3,96,120,A lighter solar weave that keeps the room bright while softening direct sunlight. A simple choice for everyday comfort.,https://cdn.shopify.com/s/files/1/0799/1456/5913/files/mistic-family.png?v=1786759512,open-roll
-zebra-classique,Vendor_SBM,Zebra Blind,Classic,Light Filtering,classiquelf,96,120,"A timeless zebra fabric with soft alternating bands. It gives you flexible light control with a clean, familiar look.",https://cdn.shopify.com/s/files/1/0799/1456/5913/files/classique-familystack.png?v=1787587663,nova-cassette
-zebra-nocturnxl,Vendor_SBM,Zebra Blind,Nocturne XL,Blackout,nocturnxl,96,120,A bold zebra fabric with wider bands and a stronger presence. Designed for larger windows and a more dramatic modern finish.,,nova-cassette
-zebra-opal,Vendor_SBM,Zebra Blind,Opal,Light Filtering,opallf,96,120,"A soft, elegant zebra fabric with a light, refined texture. It brings privacy and filtered daylight together in a calm, polished way.",https://cdn.shopify.com/s/files/1/0799/1456/5913/files/opal-familystack.png?v=1787597826,nova-cassette
-sheer-illusion,Vendor_SBM,Sheer Shade,Illusion XL,Light Filtering,illusionxl,96,120,"A sheer horizontal fabric with floating vanes for soft light control. Airy, refined, and beautifully layered.",,nova-cassette
-sheer-illusionbo,Vendor_SBM,Sheer Shade,Illusion XL Blackout,Blackout,illusionxlbo,96,120,"A room-darkening sheer horizontal fabric with a more private feel. Soft in appearance, stronger in light control.",,nova-cassette
+roller-jamboree,Vendor_SBM,Roller Shade,Jamboree Ice,Light Filtering,PG3,96,120,"Refined, subtle texture with a soft matte finish.",,open-roll
+roller-bocalf,Vendor_SBM,Roller Shade,Boca,Light Filtering,PG1,108,144,Soft woven texture that gently filters daylight.,,open-roll
+roller-chic,Vendor_SBM,Roller Shade,Chic,Light Filtering,PG2,96,120,"Smooth, polished fabric with a clean, modern finish.",,open-roll
+roller-bocabo,Vendor_SBM,Roller Shade,Boca,Blackout,PG2,96,120,"Smooth blackout fabric with a soft, understated texture.",,open-roll
+roller-obskur,Vendor_SBM,Roller Shade,Obskur,Blackout,PG3,96,120,"Rich, substantial texture with a modern, architectural finish.",,open-roll
+roller-polyflex,Vendor_SBM,Roller Shade,Polyflex,Blackout,PG3,96,120,"Simple, smooth vinyl with a practical finish.",,open-roll
+roller-royal,Vendor_SBM,Roller Shade,Royal,Light Filtering,PG3,96,120,"Soft, elegant texture with a refined, balanced finish.",,open-roll
+roller-shanellf,Vendor_SBM,Roller Shade,Shanel,Light Filtering,PG1,96,120,"Natural-looking texture with a soft, understated finish.",,open-roll
+roller-misticbo,Vendor_SBM,Roller Shade,Mistic Blackout,Blackout,misticbo,96,120,"Smooth blackout fabric with a premium, refined finish.",,open-roll
+roller-shanelbo,Vendor_SBM,Roller Shade,Shanel,Blackout,PG2,96,120,Soft woven texture that combines blackout performance with style.,,open-roll
+solars-mistic1,Vendor_SBM,Solar Shade,Mistic 1,1%,PG3,96,120,Lightweight weave designed to reduce glare and maintain visibility.,https://cdn.shopify.com/s/files/1/0799/1456/5913/files/mistic-family.png?v=1786759512,open-roll
+solars-baris,Vendor_SBM,Solar Shade,Baris,3%,PG2,96,120,"Clean, balanced weave that softens glare and preserves your view.",,open-roll
+solars-mistic3,Vendor_SBM,Solar Shade,Mistic 3,3%,PG3,96,120,Refined solar weave that reduces glare while maintaining a natural view.,https://cdn.shopify.com/s/files/1/0799/1456/5913/files/mistic-family.png?v=1786759512,open-roll
+solars-mistic5,Vendor_SBM,Solar Shade,Mistic 5,5%,PG3,96,120,Lightweight solar fabric that softens sunlight and reduces glare.,https://cdn.shopify.com/s/files/1/0799/1456/5913/files/mistic-family.png?v=1786759512,open-roll
+zebra-classique,Vendor_SBM,Zebra Blind,Classic,Light Filtering,classiquelf,96,120,"Timeless alternating bands with a clean, classic finish.",https://cdn.shopify.com/s/files/1/0799/1456/5913/files/classique-familystack.png?v=1787587663,nova-cassette
+zebra-nocturnxl,Vendor_SBM,Zebra Blind,Nocturne XL,Blackout,nocturnxl,96,120,"Wider alternating bands for a bold, modern look.",,nova-cassette
+zebra-opal,Vendor_SBM,Zebra Blind,Opal,Light Filtering,opallf,96,120,"Soft, refined texture with an elegant, understated finish.",https://cdn.shopify.com/s/files/1/0799/1456/5913/files/opal-familystack.png?v=1787597826,nova-cassette
+sheer-illusion,Vendor_SBM,Sheer Shade,Illusion XL,Light Filtering,illusionxl,96,120,Floating sheer vanes for softly diffused light and an airy look.,,nova-cassette
+sheer-illusionbo,Vendor_SBM,Sheer Shade,Illusion XL Blackout,Blackout,illusionxlbo,96,120,Elegant sheer vanes with enhanced room-darkening performance.,,nova-cassette
