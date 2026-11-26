@@ -1,0 +1,82 @@
+
+{
+  "schema_version": 1,
+  "operations": {
+    "manual-chain": {
+      "en": {
+        "name": "Chain Control",
+        "headline": "Simple. Precise. Reliable.",
+        "description": "Raise or lower your shade using a continuous operating chain. A straightforward manual option for everyday light control.",
+        "highlights": ["Manual operation", "Precise positioning", "No charging required"]
+      },
+      "fr": {
+        "name": "Commande à chaînette",
+        "headline": "Simple. Précise. Fiable.",
+        "description": "Montez ou descendez votre store à l’aide d’une chaînette continue. Une solution manuelle simple pour contrôler la lumière au quotidien.",
+        "highlights": ["Commande manuelle", "Positionnement précis", "Aucune recharge nécessaire"]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/manual_chain_95ba2f7e-f4f4-4949-9dd1-01de2cb7eab1.png?v=1789779763",
+      "product_image_overrides": {
+        "zebra": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/manual_chain-zebra_d8a0c789-956f-4ba0-b795-23cb27cdd579.png?v=1789779851",
+        "sheer": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/manual_chain_-_sheershade.png?v=1789779908"
+      }
+    },
+    "manual-cordless": {
+      "en": {
+        "name": "Eclipse Cordless",
+        "headline": "A cleaner look. Effortless control.",
+        "description": "Adjust your shade directly by hand without a hanging operating chain. Enjoy a streamlined appearance and simple manual control.",
+        "highlights": ["Cordless design", "Manual operation", "No charging required"]
+      },
+      "fr": {
+        "name": "Eclipse sans cordon",
+        "headline": "Une allure épurée. Un contrôle sans effort.",
+        "description": "Ajustez votre store directement à la main, sans chaînette apparente. Profitez d’une allure épurée et d’une commande manuelle simple.",
+        "highlights": ["Conception sans cordon", "Commande manuelle", "Aucune recharge nécessaire"]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/eclipse_658bc1a3-d41a-49f3-9c09-7c51e168dd3d.png?v=1789779763",
+      "product_image_overrides": {
+        "zebra": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/eclipse-zebra_1e782544-670e-47f6-8cc7-27a95a28705f.png?v=1789779851",
+        "sheer": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/eclipse_-_sheershade.png?v=1789779908"
+      }
+    },
+    "solo-motor": {
+      "en": {
+        "name": "Solo Motor",
+        "headline": "Comfort at the touch of a button.",
+        "description": "Enjoy powered shade adjustment and a cleaner look. Choose compatible control accessories to suit the way you use your space.",
+        "highlights": ["Motorized operation", "Compatible control accessories", "No manual chain"]
+      },
+      "fr": {
+        "name": "Moteur Solo",
+        "headline": "Le confort d’une simple pression.",
+        "description": "Profitez d’un ajustement motorisé et d’une allure épurée. Choisissez les accessoires de commande compatibles selon vos besoins.",
+        "highlights": ["Commande motorisée", "Accessoires de commande compatibles", "Sans chaînette manuelle"]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/solo-motor_25e8254f-f0ec-4ce6-9ec5-b25b53c64868.png?v=1789779763",
+      "product_image_overrides": {
+        "zebra": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/solo-motor-_zebra_e42ad34e-031e-40c4-bbe7-89b52cbfede9.png?v=1789779851",
+        "sheer": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/solo_motor_-_sheershade.png?v=1789779908"
+      }
+    },
+    "wand-motor": {
+      "en": {
+        "name": "Wand Motor",
+        "headline": "Motorized simplicity.",
+        "description": "Adjust your shade using the controls on the operating wand. A rechargeable motorized option with control directly at the window.",
+        "highlights": ["Motorized operation", "Rechargeable battery", "Direct wand control"]
+      },
+      "fr": {
+        "name": "Moteur à tige de commande",
+        "headline": "La motorisation en toute simplicité.",
+        "description": "Ajustez votre store à l’aide des commandes sur la tige. Une solution motorisée rechargeable, avec commande directement à la fenêtre.",
+        "highlights": ["Commande motorisée", "Batterie rechargeable", "Commande directe sur la tige"]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/wand_motor_1af527a5-c6b7-47e0-848a-be9379c8762c.png?v=1789779763",
+      "product_image_overrides": {
+        "zebra": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/wand_motor_-_zebra_be2987e8-e5ee-48f9-8a53-802710b1cfb4.png?v=1789779851",
+        "sheer": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/wand_motor_-_sheershade.png?v=1789779908"
+      }
+    }
+  }
+}
