@@ -1,0 +1,112 @@
+
+{
+  "schema_version": 1,
+  "headrails": {
+    "open-roll": {
+      "product_slugs": ["roller", "solar"],
+      "en": {
+        "name": "Open Roll",
+        "headline": "Less is more.",
+        "description": "A minimalist finish that leaves the fabric roll visible. An understated choice for spaces where simplicity is part of the design.",
+        "highlights": [
+          "Exposed fabric roll",
+          "Minimalist appearance",
+          "No decorative cover"
+        ]
+      },
+      "fr": {
+        "name": "Rouleau apparent",
+        "headline": "La beauté de la simplicité.",
+        "description": "Une finition minimaliste qui laisse le rouleau de tissu apparent. Un choix épuré pour les espaces où la simplicité fait partie du design.",
+        "highlights": [
+          "Rouleau de tissu apparent",
+          "Esthétique minimaliste",
+          "Sans cache décoratif"
+        ]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/open-roll2.png?v=1789778367",
+      "product_image_overrides": {}
+    },
+    "metal-valance": {
+      "product_slugs": ["roller", "solar"],
+      "en": {
+        "name": "Metal Valance",
+        "headline": "Clean lines. A polished finish.",
+        "description": "A decorative metal cover that conceals the fabric roll from the front, creating a more structured and refined appearance.",
+        "highlights": [
+          "Decorative metal cover",
+          "Clean architectural lines",
+          "Choice of hardware finishes"
+        ]
+      },
+      "fr": {
+        "name": "Cache en métal",
+        "headline": "Des lignes épurées. Une finition soignée.",
+        "description": "Un cache décoratif en métal qui dissimule le rouleau de tissu de face, créant une apparence plus structurée et raffinée.",
+        "highlights": [
+          "Cache décoratif en métal",
+          "Lignes architecturales épurées",
+          "Choix de finis"
+        ]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/metal_valance.png?v=1784914831",
+      "product_image_overrides": {}
+    },
+    "nova-cassette": {
+      "product_slugs": ["roller", "solar", "zebra", "sheer"],
+      "en": {
+        "name": "Nova Cassette",
+        "headline": "Refinement in every detail.",
+        "description": "A sleek cassette that conceals the fabric roll and operating mechanism, giving your shade a cohesive, integrated appearance.",
+        "highlights": [
+          "Concealed fabric roll",
+          "Refined contemporary design",
+          "Choice of hardware finishes"
+        ]
+      },
+      "fr": {
+        "name": "Cassette Nova",
+        "headline": "Le raffinement jusque dans les détails.",
+        "description": "Une cassette épurée qui dissimule le rouleau de tissu et le mécanisme de commande, offrant une apparence harmonieuse et intégrée.",
+        "highlights": [
+          "Rouleau de tissu dissimulé",
+          "Design contemporain raffiné",
+          "Choix de finis"
+        ]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova-cassette_-_white.png?v=1789778417",
+      "product_image_overrides": {
+        "zebra": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova-cassette-zebra-white.png?v=1789778596",
+        "sheer": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova_cassette_white_-_sheer_shade.png?v=1789778660"
+      }
+    },
+    "nova-wrap": {
+      "product_slugs": ["roller", "solar", "zebra", "sheer"],
+      "en": {
+        "name": "Nova Fabric Wrap",
+        "headline": "Beautifully coordinated.",
+        "description": "The refined silhouette of the Nova Cassette with a fabric-covered finish. Designed to create visual continuity between your shade and its headrail.",
+        "highlights": [
+          "Fabric-covered cassette",
+          "Coordinated appearance",
+          "Soft, integrated finish"
+        ]
+      },
+      "fr": {
+        "name": "Cassette Nova recouverte de tissu",
+        "headline": "Une harmonie naturelle.",
+        "description": "La silhouette raffinée de la cassette Nova avec une finition recouverte de tissu. Conçue pour créer une continuité visuelle entre votre store et sa cassette.",
+        "highlights": [
+          "Cassette recouverte de tissu",
+          "Apparence harmonisée",
+          "Finition douce et intégrée"
+        ]
+      },
+      "image_url": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova-cassette-wrap.png?v=1784914831",
+      "product_image_overrides": {
+        "zebra": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova-cassette-zebra-wrap.png?v=1789778596",
+        "sheer": "https://cdn.shopify.com/s/files/1/0799/1456/5913/files/nova_cassette_wrap_-_sheer_shade.png?v=1789778943"
+      }
+    }
+  }
+}
